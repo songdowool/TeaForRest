@@ -1570,6 +1570,10 @@ return `<span class="${i===0 ? "active" : ""}"></span>`;
 
 </div>
 
+<div class="date-box">
+${new Date(tea.created_at).toLocaleDateString("ko-KR")}
+</div>
+
 
 <h3>
 ${tea.tea_name || "이름 없는 차"}
