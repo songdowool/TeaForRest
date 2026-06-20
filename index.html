@@ -998,6 +998,7 @@ const previewImages = [
 const dots =
 document.getElementById("previewDots");
 
+if(dots){
 
 previewImages.forEach(()=>{
 
@@ -1008,8 +1009,9 @@ dots.appendChild(dot);
 
 });
 
-
 updateDots(0);
+
+}
 
 
 function previewMove(event){
