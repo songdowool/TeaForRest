@@ -1021,9 +1021,49 @@ allDots[index].classList.add("active");
 let currentIndex = 0;
 
 
+async function loadTeaDetail(){
 
+const { data, error } =
+await supabaseClient
+.from("tea_records")
+.select("*")
+.eq("tea_name","포담 금훤 우룡")
+.order("created_at",{ascending:false})
+.limit(1)
+.single();
+
+
+if(error){
+
+console.log(error);
+
+return;
+
+}
+
+
+if(data){
+
+document.getElementById("amountInput").value =
+data.amount || "";
+
+document.getElementById("temperatureInput").value =
+data.temperature || "";
+
+document.getElementById("waterInput").value =
+data.water || "";
+
+document.getElementById("memoInput").value =
+data.memo || "";
+
+}
+
+}
 
 function openGallery(){
+
+
+loadTeaDetail();
 
 
 const modal =
