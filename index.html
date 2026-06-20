@@ -159,6 +159,8 @@ h1{
 
 .card img{
     width:100%;
+    height:250px;
+    object-fit:cover;
     display:block;
 }
 
@@ -1296,18 +1298,6 @@ showImage();
 
 }
 
-const previewImages = [
-
-"images/geumhyun/0.jpg",
-
-"images/geumhyun/1.jpg",
-
-"images/geumhyun/2.jpg",
-
-"images/geumhyun/3.jpg"
-
-];
-
 
 const dots =
 document.getElementById("previewDots");
@@ -1330,8 +1320,19 @@ updateDots(0);
 
 function previewMove(event){
 
-let box =
-event.currentTarget;
+let box = event.currentTarget;
+
+let box = event.currentTarget;
+
+
+let img =
+box.querySelector(".previewImage");
+
+
+let images =
+JSON.parse(
+box.dataset.images
+);
 
 
 let width =
@@ -1343,20 +1344,39 @@ event.offsetX;
 
 
 let index =
-Math.floor((x / width) * previewImages.length);
+Math.floor(
+(x / width) * images.length
+);
 
 
-if(index >= previewImages.length){
+if(index >= images.length){
 
-index = previewImages.length - 1;
+index = images.length - 1;
 
 }
 
 
-document.getElementById("previewImage").src =
-previewImages[index];
+img.src =
+images[index];
 
-updateDots(index);
+
+let dots =
+box.querySelectorAll(".preview-dots span");
+
+
+dots.forEach(dot=>{
+
+dot.classList.remove("active");
+
+});
+
+
+if(dots[index]){
+
+dots[index].classList.add("active");
+
+}
+
 
 }
 
@@ -1510,18 +1530,17 @@ card.className="card";
 card.innerHTML = `
 
 <div class="preview-box"
+data-images='${JSON.stringify([tea.image_url])}'
 onmousemove="previewMove(event)">
 
 <img 
-id="previewImage"
+class="previewImage"
 src="${tea.image_url || 'https://via.placeholder.com/600x400'}">
 
 
 <div class="preview-dots">
+
 <span class="active"></span>
-<span></span>
-<span></span>
-<span></span>
 
 </div>
 
