@@ -585,7 +585,18 @@ onclick="nextZoomImage()">❯</button>
 </div>
 
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
+
+const supabaseUrl = "https://yoopwxriujtekdvnbegz.supabase.co";
+
+const supabaseKey = "sb_publishable_kGZwM03Bqk3BuZQ9c-Gz9A_pC3ajF9d";
+
+const supabaseClient = supabase.createClient(
+    supabaseUrl,
+    supabaseKey
+);
 
 
 const images = [
