@@ -1900,23 +1900,28 @@ async function saveRecord(){
 
 
 
-    const { data, error } =
+const { data, error } =
 
-    await supabaseClient
-    .from("tea_records")
-    .insert([
+await supabaseClient
+.from("tea_records")
+.insert([
 
-    {
+{
 
-        tea_name:teaName,
+    tea_name:teaName,
 
-        image_url:imageUrl,
+    image_url:imageUrl,
 
-        created_at:date
+    created_at:date,
 
-    }
+    amount:"",
+    temperature:"",
+    water:"",
+    memo:""
 
-    ]);
+}
+
+]);
 
 
 
