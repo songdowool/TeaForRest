@@ -1157,6 +1157,66 @@ moving = false;
 
 });
 
+async function loadTeaRecords(){
+
+const { data, error } =
+await supabaseClient
+.from("tea_records")
+.select("*")
+.order("created_at",{ascending:false});
+
+
+if(error){
+
+console.log(error);
+return;
+
+}
+
+
+const gallery =
+document.getElementById("gallery");
+
+
+data.forEach((tea)=>{
+
+
+const card =
+document.createElement("div");
+
+
+card.className="card";
+
+
+card.innerHTML = `
+
+<img src="https://via.placeholder.com/600x400">
+
+
+<h3>
+${tea.tea_name || "금훤우롱"}
+</h3>
+
+
+<p class="tea-date">
+${new Date(tea.created_at).toLocaleDateString("ko-KR")}
+</p>
+
+
+`;
+
+
+gallery.appendChild(card);
+
+
+});
+
+
+}
+
+
+loadTeaRecords();
+    
 </script>
 
 
