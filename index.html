@@ -380,6 +380,14 @@ footer{
     transform:translateX(-50%);
     display:flex;
     gap:8px;
+
+    opacity:0;
+    transition:opacity 0.3s ease;
+}
+
+
+.preview-box:hover .preview-dots{
+    opacity:1;
 }
 
 
@@ -1508,17 +1516,53 @@ card.className="card";
 card.innerHTML = `
 
 <div class="preview-box"
-data-images='${JSON.stringify([tea.image_url])}'
+data-images='${JSON.stringify(
+tea.tea_name === "포담 금훤 우룡"
+?
+[
+"images/geumhyun/0.jpg",
+"images/geumhyun/1.jpg",
+"images/geumhyun/2.jpg",
+"images/geumhyun/3.jpg"
+]
+:
+[
+tea.image_url
+]
+)}'
 onmousemove="previewMove(event)">
 
 <img 
 class="previewImage"
-src="${tea.image_url || 'https://via.placeholder.com/600x400'}">
+src="${
+tea.tea_name === "포담 금훤 우룡"
+?
+"images/geumhyun/0.jpg"
+:
+tea.image_url || "https://via.placeholder.com/600x400"
+}">
 
 
 <div class="preview-dots">
 
-<span class="active"></span>
+${
+(
+tea.tea_name === "포담 금훤 우룡"
+?
+[
+0,1,2,3
+]
+:
+[
+0
+]
+)
+.map((i)=>{
+
+return `<span class="${i===0 ? "active" : ""}"></span>`;
+
+}).join("")
+}
 
 </div>
 
