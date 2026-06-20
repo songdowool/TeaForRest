@@ -1018,7 +1018,63 @@ allDots[index].classList.add("active");
 
 }
 
+async function updateTeaRecord(){
+
+const memo =
+document.getElementById("memoInput").value;
+
+
+const amount =
+document.getElementById("amountInput").value;
+
+
+const temperature =
+document.getElementById("temperatureInput").value;
+
+
+const water =
+document.getElementById("waterInput").value;
+
+
+
+const { data, error } =
+
+await supabaseClient
+.from("tea_records")
+.update({
+
+memo:memo,
+
+amount:amount,
+
+temperature:temperature,
+
+water:water
+
+})
+.eq("id", currentTeaRecordId);
+
+
+
+if(error){
+
+console.log(error);
+
+alert("수정 실패");
+
+}
+
+else{
+
+alert("수정 완료");
+
+}
+
+
+}
+    
 let currentIndex = 0;
+let currentTeaRecordId = null;
 
 
 async function loadTeaDetail(){
@@ -1044,6 +1100,8 @@ return;
 
 if(data){
 
+currentTeaRecordId = data.id;
+    
 document.getElementById("amountInput").value =
 data.amount || "";
 
@@ -1176,8 +1234,8 @@ onclick="zoomImage('${file}')">
 
 <textarea id="memoInput" placeholder="차에 대한 기록을 남겨주세요"></textarea>
 
-<button class="save-button" onclick="saveTeaRecord()">
-저장
+<button class="save-button" onclick="updateTeaRecord()">
+수정 저장
 </button>
 
 </div>
