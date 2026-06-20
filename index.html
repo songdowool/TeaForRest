@@ -1534,6 +1534,7 @@ tea.image_url
 onclick="openGalleryFromCard(this)"
 onmousemove="previewMove(event)">
 
+
 <img 
 class="previewImage"
 src="${
@@ -1551,13 +1552,9 @@ ${
 (
 tea.tea_name === "포담 금훤 우룡"
 ?
-[
-0,1,2,3
-]
+[0,1,2,3]
 :
-[
-0
-]
+[0]
 )
 .map((i)=>{
 
@@ -1568,10 +1565,14 @@ return `<span class="${i===0 ? "active" : ""}"></span>`;
 
 </div>
 
-</div>
 
 <div class="date-box">
+
 ${new Date(tea.created_at).toLocaleDateString("ko-KR")}
+
+</div>
+
+
 </div>
 
 
@@ -1581,7 +1582,9 @@ ${tea.tea_name || "이름 없는 차"}
 
 
 <p class="tea-date">
+
 ${new Date(tea.created_at).toLocaleDateString("ko-KR")}
+
 </p>
 
 
