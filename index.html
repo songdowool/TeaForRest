@@ -1100,25 +1100,6 @@ return;
 }
 
 
-async function loadTeaDetail(){
-
-const { data, error } =
-await supabaseClient
-.from("tea_records")
-.select("*")
-.eq("id", currentTeaRecordId)
-.single();
-
-
-if(error){
-
-console.log(error);
-
-return;
-
-}
-
-
 if(data){
 
 document.getElementById("amountInput").value =
