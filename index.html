@@ -1969,9 +1969,13 @@ await supabaseClient
 
 }
 
+window.addEventListener("load",()=>{
+
+
 const year = document.getElementById("yearInput");
 const month = document.getElementById("monthInput");
 const day = document.getElementById("dayInput");
+
 
 for(let i=2020;i<=2030;i++){
 
@@ -1979,11 +1983,13 @@ for(let i=2020;i<=2030;i++){
 
 }
 
+
 for(let i=1;i<=12;i++){
 
     month.innerHTML += `<option>${i}</option>`;
 
 }
+
 
 for(let i=1;i<=31;i++){
 
@@ -1991,7 +1997,11 @@ for(let i=1;i<=31;i++){
 
 }
 
+
 loadTeaRecords();
+
+
+});
     
 </script>
 
