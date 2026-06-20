@@ -1190,14 +1190,21 @@ card.className="card";
 
 card.innerHTML = `
 
+<div class="preview-box"
+onmousemove="previewMove(event)">
+
 <img 
-src="${tea.image_url || 'https://via.placeholder.com/600x400'}"
-class="zoom-image"
-onclick="openGallery()">
+id="previewImage"
+src="${tea.image_url || 'https://via.placeholder.com/600x400'}">
+
+
+<div class="preview-dots"></div>
+
+</div>
 
 
 <h3>
-${tea.tea_name || "금훤우롱"}
+${tea.tea_name || "이름 없는 차"}
 </h3>
 
 
