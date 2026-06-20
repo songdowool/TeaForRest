@@ -1190,7 +1190,10 @@ card.className="card";
 
 card.innerHTML = `
 
-<img src="${tea.image_url || 'https://via.placeholder.com/600x400'}">
+<img 
+src="${tea.image_url || 'https://via.placeholder.com/600x400'}"
+class="zoom-image"
+onclick="openGallery()">
 
 
 <h3>
@@ -1201,6 +1204,7 @@ ${tea.tea_name || "금훤우롱"}
 <p class="tea-date">
 ${new Date(tea.created_at).toLocaleDateString("ko-KR")}
 </p>
+
 
 `;
 
