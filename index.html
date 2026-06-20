@@ -1022,7 +1022,7 @@ allDots[index].classList.add("active");
 
 async function updateTeaRecord(){
 
-console.log(currentTeaRecordId);
+console.log("현재 차 번호:", currentTeaRecordId);
     
 const memo =
 document.getElementById("memoInput").value;
@@ -1102,17 +1102,35 @@ return;
 
 if(data){
 
+if(data.amount !== null){
+
 document.getElementById("amountInput").value =
-data.amount || "";
+data.amount;
+
+}
+
+if(data.temperature !== null){
 
 document.getElementById("temperatureInput").value =
-data.temperature || "";
+data.temperature;
+
+}
+
+
+if(data.water !== null){
 
 document.getElementById("waterInput").value =
-data.water || "";
+data.water;
+
+}
+
+
+if(data.memo !== null){
 
 document.getElementById("memoInput").value =
-data.memo || "";
+data.memo;
+
+}
 
 }
 
