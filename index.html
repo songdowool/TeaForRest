@@ -1298,29 +1298,7 @@ showImage();
 
 }
 
-
-const dots =
-document.getElementById("previewDots");
-
-if(dots){
-
-previewImages.forEach(()=>{
-
-let dot =
-document.createElement("span");
-
-dots.appendChild(dot);
-
-});
-
-updateDots(0);
-
-}
-
-
 function previewMove(event){
-
-let box = event.currentTarget;
 
 let box = event.currentTarget;
 
