@@ -614,6 +614,53 @@ const images = [
 
 async function saveTeaRecord(){
 
+const memo =
+document.getElementById("memoInput").value;
+
+
+const amount =
+document.getElementById("amountInput").value;
+
+
+const temperature =
+document.getElementById("temperatureInput").value;
+
+
+const water =
+document.getElementById("waterInput").value;
+
+
+
+const { data, error } =
+await supabaseClient
+.from("tea_records")
+.insert([
+{
+memo: memo,
+amount: amount,
+temperature: temperature,
+water: water
+}
+]);
+
+
+
+if(error){
+
+console.log(error);
+
+alert("저장 실패");
+
+}
+
+else{
+
+alert("저장 완료");
+
+}
+
+}
+
 const teaName =
 document.getElementById("teaNameInput").value;
 
@@ -759,11 +806,20 @@ onclick="zoomImage('${file}')">
 
 <div class="tea-info">
 
-<p>용량 : 3g</p>
+<p>
+용량 :
+<input id="amountInput" type="text" placeholder="예: 3g">
+</p>
 
-<p>온도 : 80℃</p>
+<p>
+온도 :
+<input id="temperatureInput" type="text" placeholder="예: 80℃">
+</p>
 
-<p>물 : 90ml</p>
+<p>
+물 :
+<input id="waterInput" type="text" placeholder="예: 90ml">
+</p>
 
 </div>
 
@@ -775,9 +831,11 @@ onclick="zoomImage('${file}')">
 
 <h3>포담 금훤 우룡</h3>
 
-<p>
-차에서 우유맛이 나다니.
-</p>
+<textarea id="memoInput" placeholder="차에 대한 기록을 남겨주세요"></textarea>
+
+<button onclick="saveTeaRecord()">
+저장
+</button>
 
 </div>
 
