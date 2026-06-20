@@ -469,12 +469,11 @@ header{
 
 
 
-<div class="card">
+<div class="card" onclick="openGallery()">
 
 
 <div class="preview-box"
-onmousemove="previewMove(event)"
-onclick="openGallery()">
+onmousemove="previewMove(event)">
 
 <img id="previewImage"
 src="images/geumhyun/main.jpg">
@@ -487,6 +486,21 @@ src="images/geumhyun/main.jpg">
 
 
 <h3>포담 금훤 우룡</h3>
+
+
+<p class="tea-date">
+2026.06.09
+</p>
+
+
+<div class="date-box">
+
+2026-06-18
+
+</div>
+
+
+</div>
 
 <p class="tea-date">
 2026.06.09
@@ -649,42 +663,6 @@ if(error){
 
 console.log(error);
 
-alert("저장 실패");
-
-}
-
-else{
-
-alert("저장 완료");
-
-}
-
-}
-
-const teaName =
-document.getElementById("teaNameInput").value;
-
-
-const memo =
-document.getElementById("memoInput").value;
-
-
-
-const { data, error } =
-await supabaseClient
-.from("tea_records")
-.insert([
-{
-tea_name: teaName,
-memo: memo
-}
-]);
-
-
-
-if(error){
-
-console.log(error);
 alert("저장 실패");
 
 }
