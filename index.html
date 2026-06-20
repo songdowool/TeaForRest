@@ -927,6 +927,17 @@ onclick="nextZoomImage()">❯</button>
 
 <script>
 
+function openGalleryFromCard(card){
+
+    images =
+    JSON.parse(card.dataset.images);
+
+    currentIndex = 0;
+
+    openGallery();
+
+}
+
 const supabaseUrl = "https://yoopwxriujtekdvnbegz.supabase.co";
 
 const supabaseKey = "sb_publishable_kGZwM03Bqk3BuZQ9c-Gz9A_pC3ajF9d";
@@ -937,17 +948,7 @@ const supabaseClient = supabase.createClient(
 );
 
 
-const images = [
-
-"images/geumhyun/0.jpg",
-
-"images/geumhyun/1.jpg",
-
-"images/geumhyun/2.jpg",
-
-"images/geumhyun/3.jpg",
-
-];
+let images = [];
 
 
 async function saveTeaRecord(){
@@ -1530,6 +1531,7 @@ tea.tea_name === "포담 금훤 우룡"
 tea.image_url
 ]
 )}'
+onclick="openGalleryFromCard(this)"
 onmousemove="previewMove(event)">
 
 <img 
