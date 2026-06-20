@@ -544,71 +544,6 @@ button:hover{
 <section class="gallery" id="gallery">
 
 
-<div class="card">
-
-<img src="https://via.placeholder.com/600x400">
-
-<h3>보이생차</h3>
-
-<p>2026-06-17</p>
-
-</div>
-
-
-
-<div class="card" onclick="openGallery()">
-
-
-<div class="preview-box"
-onmousemove="previewMove(event)">
-
-<img id="previewImage"
-src="images/geumhyun/main.jpg">
-
-<div class="preview-dots" id="previewDots">
-
-</div>
-
-</div>
-
-
-<h3>포담 금훤 우룡</h3>
-
-<p class="tea-date">
-2026.06.09
-</p>
-
-<div class="date-box">
-2026-06-18
-</div>
-
-</div>
-
-
-
-
-<div class="card">
-
-<img src="https://via.placeholder.com/600x400">
-
-<h3>정산소종</h3>
-
-<p>2026-06-17</p>
-
-</div>
-
-<div class="card">
-
-<img src="https://via.placeholder.com/600x400">
-
-<h3>대홍포</h3>
-
-<p>2026-06-20</p>
-
-</div>
-
-
-
 </section>
 
 </div>
@@ -1222,51 +1157,6 @@ moving = false;
 
 });
 
-async function loadTeaRecords(){
-
-const { data, error } =
-await supabaseClient
-.from("tea_records")
-.select("*")
-.order("created_at",{ascending:false});
-
-if(error){
-
-console.log(error);
-return;
-
-}
-
-const gallery =
-document.getElementById("gallery");
-
-data.forEach((tea)=>{
-
-const card =
-document.createElement("div");
-
-card.className = "card";
-
-card.innerHTML = `
-
-<img src="${tea.image_url || 'https://via.placeholder.com/600x400'}">
-
-<h3>${tea.tea_name || '이름 없음'}</h3>
-
-<p class="tea-date">
-${new Date(tea.created_at).toLocaleDateString("ko-KR")}
-</p>
-
-`;
-
-gallery.appendChild(card);
-
-});
-
-}
-
-loadTeaRecords();    
-    
 </script>
 
 
