@@ -1657,9 +1657,135 @@ if(index === 0){
 
 
 
-function saveRecord(){
+async function saveRecord(){
 
-    alert("저장 준비 완료");
+    const teaName =
+    document.getElementById("teaNameInput").value;
+
+
+    const year =
+    document.getElementById("yearInput").value;
+
+
+    const month =
+    document.getElementById("monthInput").value;
+
+
+    const day =
+    document.getElementById("dayInput").value;
+
+
+    const date =
+    `${year}-${month}-${day}`;
+
+
+    if(!teaName){
+
+        alert("차 이름을 입력해주세요");
+
+        return;
+
+    }
+
+
+    if(selectedPhotos.length === 0){
+
+        alert("사진을 선택해주세요");
+
+        return;
+
+    }
+
+
+
+    const photo =
+    selectedPhotos[0];
+
+
+    const fileName =
+    `${Date.now()}_${photo.name}`;
+
+
+
+    const { data:uploadData, error:uploadError } =
+
+    await supabaseClient
+    .storage
+    .from("tea-images")
+    .upload(
+        fileName,
+        photo
+    );
+
+
+
+    if(uploadError){
+
+        console.log(uploadError);
+
+        alert("사진 업로드 실패");
+
+        return;
+
+    }
+
+
+
+    const { data:urlData } =
+
+    supabaseClient
+    .storage
+    .from("tea-images")
+    .getPublicUrl(
+        fileName
+    );
+
+
+
+    const imageUrl =
+    urlData.publicUrl;
+
+
+
+    const { data, error } =
+
+    await supabaseClient
+    .from("tea_records")
+    .insert([
+
+    {
+
+        tea_name:teaName,
+
+        image_url:imageUrl,
+
+        created_at:date
+
+    }
+
+    ]);
+
+
+
+    if(error){
+
+        console.log(error);
+
+        alert("저장 실패");
+
+        return;
+
+    }
+
+
+
+    alert("기록 완료");
+
+
+    closeRecord();
+
+
+    location.reload();
 
 }
 
