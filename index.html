@@ -530,7 +530,20 @@ src="images/geumhyun/main.jpg">
 
 </div>
 
+<div class="tea-upload">
 
+<h2>차 기록하기</h2>
+
+<input id="teaNameInput" type="text" placeholder="차 이름">
+
+<textarea id="memoInput" placeholder="차 기록"></textarea>
+
+<button onclick="saveTeaRecord()">
+저장
+</button>
+
+</div>
+    
 <footer>
 
 Tea For rest © 2026
@@ -612,8 +625,45 @@ const images = [
 ];
 
 
+async function saveTeaRecord(){
+
+const teaName =
+document.getElementById("teaNameInput").value;
 
 
+const memo =
+document.getElementById("memoInput").value;
+
+
+
+const { data, error } =
+await supabaseClient
+.from("tea_records")
+.insert([
+{
+tea_name: teaName,
+memo: memo
+}
+]);
+
+
+
+if(error){
+
+console.log(error);
+alert("저장 실패");
+
+}
+
+else{
+
+alert("저장 완료");
+
+}
+
+}
+
+    
 function updateDots(index){
 
 let allDots =
