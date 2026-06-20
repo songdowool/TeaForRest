@@ -1121,9 +1121,6 @@ data.memo || "";
 function openGallery(){
 
 
-loadTeaDetail();
-
-
 const modal =
 document.getElementById("galleryModal");
 
@@ -1138,8 +1135,14 @@ modal.style.opacity="1";
 },10);
 
 
-
 showImage();
+
+
+setTimeout(()=>{
+
+loadTeaDetail();
+
+},100);
 
 
 }
