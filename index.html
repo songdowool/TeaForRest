@@ -488,6 +488,27 @@ button:hover{
     resize:none;
 
 }
+
+.save-button{
+
+    background:#2f4a35;
+
+    color:#d6c6a5;
+
+    border:1px solid #4a6b52;
+
+    padding:8px 25px;
+
+    cursor:pointer;
+
+}
+
+
+.save-button:hover{
+
+    background:#3d6046;
+
+}
     
 </style>
 
@@ -845,7 +866,7 @@ onclick="zoomImage('${file}')">
 
 <textarea id="memoInput" placeholder="차에 대한 기록을 남겨주세요"></textarea>
 
-<button onclick="saveTeaRecord()">
+<button class="save-button" onclick="saveTeaRecord()">
 저장
 </button>
 
