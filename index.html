@@ -1100,29 +1100,27 @@ return;
 }
 
 
-if(data){
+async function loadTeaDetail(){
 
-document.getElementById("amountInput").value =
-data.amount || "";
+const { data, error } =
+await supabaseClient
+.from("tea_records")
+.select("*")
+.eq("id", currentTeaRecordId)
+.single();
 
-document.getElementById("temperatureInput").value =
-data.temperature || "";
 
-document.getElementById("waterInput").value =
-data.water || "";
+if(error){
 
-document.getElementById("memoInput").value =
-data.memo || "";
+console.log(error);
+
+return;
 
 }
 
-}
-
 
 if(data){
 
-currentTeaRecordId = data.id;
-    
 document.getElementById("amountInput").value =
 data.amount || "";
 
