@@ -516,6 +516,233 @@ button:hover{
     background:#332a22;
 
 }
+
+
+.record-button{
+
+    display:block;
+
+    position:fixed;
+
+    top:30px;
+
+    right:40px;
+
+    z-index:9999;
+
+    padding:8px 24px;
+
+    font-size:16px;
+
+    opacity:0;
+
+    pointer-events:none;
+
+    transition:opacity 0.8s ease;
+
+}
+
+
+.record-button.show{
+
+    opacity:1;
+
+    pointer-events:auto;
+
+}
+
+
+
+.record-box{
+
+    max-width:600px;
+
+    margin:0 auto;
+
+    position:absolute;
+
+    top:50%;
+
+    left:50%;
+
+    transform:translate(-50%,-50%);
+
+    text-align:center;
+
+}
+
+
+
+.record-box input{
+
+    width:100%;
+
+    box-sizing:border-box;
+
+    margin-bottom:8px;
+
+    text-align:center;
+
+}
+
+#teaDateInput{
+
+    display:block;
+
+    margin:0 auto 20px;
+
+    text-align:center;
+
+}
+
+#teaDateInput::-webkit-datetime-edit{
+    text-align:center;
+}
+
+#teaDateInput::-webkit-datetime-edit-fields-wrapper{
+    justify-content:center;
+}
+
+
+
+.photo-select{
+
+    text-align:center;
+
+    margin-top:40px;
+
+}
+
+
+
+.photo-select label{
+
+    border:1px solid #4a3c2b;
+
+    padding:10px 30px;
+
+    cursor:pointer;
+
+}
+
+
+
+#photoPreview{
+
+    display:flex;
+
+    gap:10px;
+
+    flex-wrap:wrap;
+
+    margin-top:30px;
+
+}
+
+
+
+#photoPreview{
+
+    display:flex;
+
+    gap:8px;
+
+    flex-wrap:wrap;
+
+    margin-top:20px;
+
+    justify-content:center;
+
+}
+
+
+#photoPreview img{
+
+    width:110px;
+
+    height:110px;
+
+    object-fit:cover;
+
+    border:1px solid #4a3c2b;
+
+    cursor:pointer;
+
+    transition:0.3s;
+
+}
+
+
+#photoPreview img:hover{
+
+    transform:scale(1.05);
+
+}
+
+
+.input-title{
+
+    margin:8px 0 3px;
+
+}
+
+
+.date-center{
+    text-align:center;
+}
+
+#teaDateInput{
+    display:inline-block;
+}
+
+
+.date-box-input{
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    gap:5px;
+
+    margin-bottom:20px;
+
+    color:#9d8a68;
+
+}
+
+
+.date-box-input select{
+
+    background:transparent;
+
+    color:#d6c6a5;
+
+    border:none;
+
+    border-bottom:1px solid #4a3c2b;
+
+    padding:5px 8px;
+
+    font-family:"Noto Serif KR", serif;
+
+    font-size:15px;
+
+    outline:none;
+
+    text-align:center;
+
+}
+
+
+.date-box-input span{
+
+    color:#8c7a5d;
+
+    font-size:14px;
+
+}
     
 </style>
 
@@ -543,11 +770,94 @@ button:hover{
 
 <section class="gallery" id="gallery">
 
-
 </section>
+
 
 </div>
 
+
+<button id="recordButton" class="record-button" onclick="openRecord()">
+기록하기
+</button>
+
+
+<div id="recordModal" class="modal">
+
+
+<span class="close" onclick="closeRecord()">×</span>
+
+
+<div class="tea-detail record-box">
+
+
+<h2>
+무슨 차를 마셨나요?
+</h2>
+
+
+<p class="input-title">
+이름
+</p>
+
+<input id="teaNameInput" type="text">
+
+
+<p class="input-title">
+날짜
+</p>
+
+<div class="date-center">
+<div class="date-box-input">
+    <select id="yearInput"></select>
+    <span>년</span>
+
+    <select id="monthInput"></select>
+    <span>월</span>
+
+    <select id="dayInput"></select>
+    <span>일</span>
+</div>
+</div>
+
+
+
+<div class="photo-select">
+
+
+<label for="photoInput">
+사진 선택
+</label>
+
+
+<input 
+id="photoInput"
+type="file"
+accept="image/*"
+multiple
+onchange="selectPhotos(event)"
+style="display:none">
+
+
+</div>
+
+
+
+<div id="photoPreview"></div>
+
+
+
+<button class="save-button"
+onclick="saveRecord()">
+
+저장
+
+</button>
+
+
+</div>
+
+
+</div>
 
 <footer>
 
@@ -1116,6 +1426,10 @@ document
 .getElementById("movingLine")
 .classList.add("show");
 
+document
+.getElementById("recordButton")
+.classList.add("show");
+
 
 setTimeout(()=>{
 
@@ -1141,6 +1455,11 @@ document
 document
 .getElementById("movingLine")
 .classList.remove("move");
+
+document
+.getElementById("recordButton")
+.classList.remove("show");
+
 
 window.scrollTo({
     top:0,
@@ -1222,11 +1541,7 @@ ${new Date(tea.created_at).toLocaleDateString("ko-KR")}
 `;
 
 
-card.onclick = function(){
-    openGallery();
-};
-    
-    
+
 gallery.appendChild(card);
 
 
@@ -1235,6 +1550,140 @@ gallery.appendChild(card);
 
 }
 
+function openRecord(){
+
+    const modal =
+    document.getElementById("recordModal");
+
+
+    modal.style.display="block";
+
+
+    setTimeout(()=>{
+
+        modal.style.opacity="1";
+
+    },10);
+
+}
+
+
+
+function closeRecord(){
+
+    const modal =
+    document.getElementById("recordModal");
+
+
+    modal.style.opacity="0";
+
+
+    setTimeout(()=>{
+
+        modal.style.display="none";
+
+    },500);
+
+}
+
+
+
+let selectedPhotos = [];
+
+
+
+function selectPhotos(event){
+
+
+    selectedPhotos =
+    Array.from(event.target.files);
+
+
+    const preview =
+    document.getElementById("photoPreview");
+
+
+    preview.innerHTML="";
+
+
+selectedPhotos.forEach((photo,index)=>{
+
+    let img =
+    document.createElement("img");
+
+
+    img.src =
+    URL.createObjectURL(photo);
+
+
+    img.dataset.index = index;
+
+
+    img.onclick = function(){
+
+        document
+        .querySelectorAll("#photoPreview img")
+        .forEach((i)=>{
+
+            i.style.border="none";
+
+        });
+
+
+        this.style.border="2px solid #d6c6a5";
+
+
+        selectedPhotos.unshift(
+            selectedPhotos.splice(index,1)[0]
+        );
+
+    };
+
+
+if(index === 0){
+
+    img.style.border="3px solid #d6c6a5";
+
+}
+
+
+    preview.appendChild(img);
+
+
+});
+
+
+}
+
+
+
+function saveRecord(){
+
+    alert("저장 준비 완료");
+
+}
+
+const year = document.getElementById("yearInput");
+const month = document.getElementById("monthInput");
+const day = document.getElementById("dayInput");
+
+for(let i=2020;i<=2030;i++){
+
+    year.innerHTML += `<option>${i}</option>`;
+
+}
+
+for(let i=1;i<=12;i++){
+
+    month.innerHTML += `<option>${i}</option>`;
+
+}
+
+for(let i=1;i<=31;i++){
+
+    day.innerHTML += `<option>${i}</option>`;
+
+}
 
 loadTeaRecords();
     
