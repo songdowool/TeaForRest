@@ -1060,19 +1060,19 @@ async function updateTeaRecord(){
     .from("tea_records")
     .update({
 
-        memo: memo,
+    memo: memo,
 
-        amount: amount,
+    amount: amount,
 
-        temperature: temperature,
+    temperature: temperature,
 
-        water: water
+    water: water
 
-    })
-    .eq(
-        "id",
-        currentTeaRecordId
-    );
+})
+.eq(
+    "id",
+    currentTeaRecordId)
+.select();
 
 
 
@@ -1087,13 +1087,15 @@ async function updateTeaRecord(){
     }
 
 
-    alert("수정 완료");
+console.log("수정 결과:", data);
+
+alert("수정 완료");
 
 
-    alert("수정 완료");
-    console.log("저장된 ID:", currentTeaRecordId);
+console.log("저장된 ID:", currentTeaRecordId);
 
-    await loadTeaDetail();
+// 잠시 제거
+// await loadTeaDetail();
 
 
 }
