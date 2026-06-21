@@ -754,6 +754,32 @@ button:hover{
     font-size:14px;
 
 }
+
+
+#photoPreview div{
+    transition:0.25s ease;
+}
+
+
+#photoPreview .dragging{
+
+    transform:scale(1.08) translateY(-8px);
+
+    opacity:1;
+
+    z-index:10;
+
+    box-shadow:
+    0 15px 25px rgba(0,0,0,0.5);
+
+}
+
+
+#photoPreview .dragging img{
+
+    border:2px solid #d6c6a5;
+
+}
     
 </style>
 
@@ -1852,7 +1878,6 @@ function renderPhotoPreview(){
 
 
 
-
         box.addEventListener("dragstart",function(e){
 
             e.dataTransfer.setData(
@@ -1860,7 +1885,16 @@ function renderPhotoPreview(){
                 index
             );
 
-        });
+    box.classList.add("dragging");
+
+});
+
+
+box.addEventListener("dragend",function(){
+
+    box.classList.remove("dragging");
+
+});
 
 
 
