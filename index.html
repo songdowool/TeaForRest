@@ -1091,11 +1091,22 @@ console.log("수정 결과:", data);
 
 alert("수정 완료");
 
-
 console.log("저장된 ID:", currentTeaRecordId);
+console.log("수정 데이터:", {
+    memo:memo,
+    amount:amount,
+    temperature:temperature,
+    water:water
+});
 
-// 잠시 제거
-// await loadTeaDetail();
+const { data:checkData, error:checkError } =
+await supabaseClient
+.from("tea_records")
+.select("*")
+.eq("id", currentTeaRecordId);
+
+console.log("수정 후 DB 확인:", checkData);
+
 
 
 }
@@ -1125,17 +1136,20 @@ return;
 
 if(data){
 
+console.log("불러온 데이터:", data);
+
+
 document.getElementById("amountInput").value =
-data.amount || "";
+data.amount ?? "";
 
 document.getElementById("temperatureInput").value =
-data.temperature || "";
+data.temperature ?? "";
 
 document.getElementById("waterInput").value =
-data.water || "";
+data.water ?? "";
 
 document.getElementById("memoInput").value =
-data.memo || "";
+data.memo ?? "";
 
 }
 
