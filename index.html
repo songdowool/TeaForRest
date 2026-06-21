@@ -1609,14 +1609,9 @@ data-id="${tea.id}"
 data-images='${JSON.stringify(
 
     
-tea.tea_name === "포담 금훤 우룡"
+tea.images && tea.images.length > 0
 ?
-[
-"images/geumhyun/0.jpg",
-"images/geumhyun/1.jpg",
-"images/geumhyun/2.jpg",
-"images/geumhyun/3.jpg"
-]
+tea.images
 :
 [
 tea.image_url
@@ -1629,9 +1624,9 @@ onmousemove="previewMove(event)">
 <img 
 class="previewImage"
 src="${
-tea.tea_name === "포담 금훤 우룡"
+tea.images && tea.images.length > 0
 ?
-"images/geumhyun/0.jpg"
+tea.images[0]
 :
 tea.image_url || "https://via.placeholder.com/600x400"
 }">
@@ -1641,9 +1636,10 @@ tea.image_url || "https://via.placeholder.com/600x400"
 
 ${
 (
-tea.tea_name === "포담 금훤 우룡"
+(
+tea.images && tea.images.length > 0
 ?
-[0,1,2,3]
+tea.images.map((_,i)=>i)
 :
 [0]
 )
