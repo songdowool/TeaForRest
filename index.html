@@ -1547,12 +1547,6 @@ document
 
 window.addEventListener("wheel",(e)=>{
 
-if(document.getElementById("recordModal").style.display === "block"){
-    e.preventDefault();
-    return;
-}
-
-
 if(moving) return;
 
 moving = true;
@@ -1631,14 +1625,9 @@ let touchStartY = 0;
 
 window.addEventListener("touchstart",(e)=>{
 
-    if(document.getElementById("recordModal").style.display === "block"){
-        e.preventDefault();
-        return;
-    }
-
     touchStartY = e.touches[0].clientY;
 
-},{passive:false});
+});
 
 
 
@@ -1882,9 +1871,6 @@ function openRecord(){
     modal.style.display="block";
 
 
-    document.body.style.overflow="hidden";
-
-
     setTimeout(()=>{
 
         modal.style.opacity="1";
@@ -1902,9 +1888,6 @@ function closeRecord(){
 
 
     modal.style.opacity="0";
-
-
-    document.body.style.overflow="auto";
 
 
     setTimeout(()=>{
