@@ -930,12 +930,17 @@ onclick="nextZoomImage()">❯</button>
 
 function openGalleryFromCard(card){
 
+    console.log("카드:", card);
+    console.log("아이디:", card.dataset.id);
+
     images =
     JSON.parse(card.dataset.images);
 
     currentIndex = 0;
 
     currentTeaRecordId = Number(card.dataset.id);
+
+    console.log("현재 저장 ID:", currentTeaRecordId);
 
     openGallery();
 
