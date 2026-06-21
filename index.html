@@ -780,6 +780,17 @@ button:hover{
     border:2px solid #d6c6a5;
 
 }
+
+
+@media(max-width:768px){
+
+.hero-line.move{
+
+    transform:translateY(0);
+
+}
+
+}
     
 </style>
 
@@ -1561,8 +1572,11 @@ document
 },100);
 
 window.scrollTo({
-    top:window.innerHeight,
+
+    top:document.querySelector(".gallery-wrapper").offsetTop,
+
     behavior:"smooth"
+
 });
 
 }else{
