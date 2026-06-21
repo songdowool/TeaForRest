@@ -971,7 +971,6 @@ function openGalleryFromCard(card){
     console.log("카드:", card);
     console.log("아이디:", card.dataset.id);
 
-    images =
     JSON.parse(card.dataset.images);
 
     currentIndex = 0;
@@ -1801,7 +1800,7 @@ card.innerHTML = `
 
 data-id="${tea.id}"
 
-data-images='${JSON.stringify(cardImages)}'
+data-images="${cardImages.join(",")}"
 
 onclick="openGalleryFromCard(this)"
 
