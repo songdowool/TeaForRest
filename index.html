@@ -2205,7 +2205,9 @@ function openRecord(){
     modal.style.display="block";
 
     setTimeout(()=>{
+
         modal.style.opacity="1";
+
     },10);
 
 }
@@ -2238,87 +2240,140 @@ let mainPhotoIndex = 0;
 let editSelectedPhotos = [];
 let editMainPhotoIndex = 0;
 
-function selectEditPhotos(event){
-
-const newPhotos =
-Array.from(event.target.files);
-
-
-editSelectedPhotos =
-editSelectedPhotos.concat(newPhotos);
-
-
-renderEditPhotoPreview();
-
-}
-
 function renderEditPhotoPreview(){
 
-const preview =
-document.getElementById("editPhotoPreview");
+    const preview =
+    document.getElementById("editPhotoPreview");
 
-preview.innerHTML = "";
+    preview.innerHTML = "";
 
+    editSelectedPhotos.forEach((photo,index)=>{
 
-editSelectedPhotos.forEach((photo,index)=>{
+        const box =
+        document.createElement("div");
 
+        box.style.position="relative";
 
-const img =
-document.createElement("img");
+        box.draggable = true;
+        box.dataset.index = index;
 
+        const img =
+        document.createElement("img");
 
-if(typeof photo === "string"){
+        if(typeof photo === "string"){
+            img.src = photo;
+        }else{
+            img.src = URL.createObjectURL(photo);
+        }
 
-    img.src = photo;
+        img.style.width="112px";
+        img.style.height="112px";
+        img.style.objectFit="cover";
+        img.style.cursor="pointer";
 
-}else{
+        // 대표 사진 표시
+        if(index === editMainPhotoIndex){
+            img.style.border = "3px solid #d6c6a5";
+        }else{
+            img.style.border = "1px solid #4a3c2b";
+        }
 
-    img.src =
-    URL.createObjectURL(photo);
+        // 대표 사진 선택
+        img.onclick = function(){
+            editMainPhotoIndex = index;
+            renderEditPhotoPreview();
+        };
 
-}
+        // 삭제 버튼
+        const remove =
+        document.createElement("span");
 
+        remove.innerHTML = "×";
 
-img.style.width="112px";
+        remove.style.position="absolute";
+        remove.style.top="3px";
+        remove.style.right="6px";
+        remove.style.color="white";
+        remove.style.fontSize="20px";
+        remove.style.cursor="pointer";
+        remove.style.display="none";
 
-img.style.height="112px";
+        box.onmouseenter = function(){
+            remove.style.display="block";
+        };
 
-img.style.objectFit="cover";
+        box.onmouseleave = function(){
+            remove.style.display="none";
+        };
 
-img.style.margin="5px";
+        remove.onclick = function(e){
+            e.stopPropagation();
 
-img.style.cursor="pointer";
+            editSelectedPhotos.splice(index,1);
 
-// ✅ 대표사진 표시
-if(index === editMainPhotoIndex){
-    img.style.border = "3px solid #d6c6a5";
-}else{
-    img.style.border = "1px solid #4a3c2b";
-}
+            if(editMainPhotoIndex >= editSelectedPhotos.length){
+                editMainPhotoIndex = 0;
+            }
 
+            renderEditPhotoPreview();
+        };
 
-// ✅ 클릭 시 대표사진 변경
-img.onclick = function(){
+        // ✅ 드래그 시작
+        box.addEventListener("dragstart",function(e){
+            dragFromIndex = index;
+            box.classList.add("dragging");
+        });
 
-    editMainPhotoIndex = index;
+        // ✅ 드래그 끝
+        box.addEventListener("dragend",function(){
+            box.classList.remove("dragging");
+        });
 
-    document
-    .querySelectorAll("#editPhotoPreview img")
-    .forEach((photo)=>{
-        photo.style.border = "1px solid #4a3c2b";
+        // ✅ 드롭 허용
+        box.addEventListener("dragover",function(e){
+            e.preventDefault();
+        });
+
+        // ✅ 드롭 처리 (핵심)
+        box.addEventListener("drop",function(e){
+
+            e.preventDefault();
+
+            const from = dragFromIndex;
+            const to = index;
+
+            if(from === null || from === to){
+                return;
+            }
+
+            const moved =
+            editSelectedPhotos.splice(from,1)[0];
+
+            editSelectedPhotos.splice(to,0,moved);
+
+            // 대표사진 인덱스 보정
+            if(editMainPhotoIndex === from){
+                editMainPhotoIndex = to;
+            }else if(from < editMainPhotoIndex && to >= editMainPhotoIndex){
+                editMainPhotoIndex--;
+            }else if(from > editMainPhotoIndex && to <= editMainPhotoIndex){
+                editMainPhotoIndex++;
+            }
+
+            renderEditPhotoPreview();
+
+        });
+
+        box.appendChild(img);
+        box.appendChild(remove);
+
+        preview.appendChild(box);
+
     });
 
-    img.style.border = "3px solid #d6c6a5";
-};
-
-
-preview.appendChild(img);
-
-
-});
-
-
 }
+
+
 
 function selectPhotos(event){
 
@@ -2771,60 +2826,10 @@ data.images || [];
 
 editSelectedPhotos = [...savedImages];
 
-savedImages.forEach((image,index)=>{
+editSelectedPhotos = [...savedImages];
+editMainPhotoIndex = 0;
 
-
-const img =
-document.createElement("img");
-
-
-img.src = image;
-
-
-img.style.width="110px";
-
-img.style.height="110px";
-
-img.style.objectFit="cover";
-
-img.style.margin="5px";
-
-img.style.cursor="pointer";
-
-img.style.border =
-index === 0
-?
-"3px solid #d6c6a5"
-:
-"1px solid #4a3c2b";
-
-
-
-img.onclick=function(){
-
-editMainPhotoIndex = index;
-
-document
-.querySelectorAll("#editPhotoPreview img")
-.forEach((photo)=>{
-
-photo.style.border =
-"1px solid #4a3c2b";
-
-});
-
-img.style.border =
-"3px solid #d6c6a5";
-
-};
-
-
-
-preview.appendChild(img);
-
-
-
-});
+renderEditPhotoPreview();
 
 
 
@@ -3056,6 +3061,7 @@ async function openPhotoManager(){
 
 }
 
+let dragFromIndex = null;
     
 </script>
 
