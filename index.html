@@ -795,6 +795,22 @@ button:hover{
 .galleryModal-scroll{
     overflow-y:auto;
 }
+
+
+function stopBackgroundScroll(e){
+
+    const modal =
+    document.getElementById("galleryModal");
+
+
+    if(modal.style.display === "block"){
+
+        e.stopPropagation();
+
+    }
+
+}
+            
 </style>
 
 </head>
@@ -1160,6 +1176,8 @@ modal.style.overflowY="auto";
 
 document.body.style.overflow="hidden";
 
+document.addEventListener("wheel", stopBackgroundScroll, {passive:false});
+
 
 setTimeout(()=>{
 
@@ -1303,7 +1321,8 @@ modal.style.opacity="0";
 
 document.body.style.overflow="auto";
 
-
+document.removeEventListener("wheel", stopBackgroundScroll);
+            
 document.getElementById("modalContent").innerHTML="";
 
 
