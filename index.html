@@ -781,23 +781,39 @@ button:hover{
 }
 
 
-#photoPreview .dragging{
+#photoPreview div.dragging{
 
-    transform:scale(1.08) translateY(-8px);
+    transform:scale(1.12) translateY(-12px);
 
     opacity:1;
 
-    z-index:10;
+    z-index:100;
+
+    filter:brightness(1.15);
 
     box-shadow:
-    0 15px 25px rgba(0,0,0,0.5);
+    0 20px 40px rgba(0,0,0,0.7);
 
 }
 
 
-#photoPreview .dragging img{
+#photoPreview div.dragging img{
 
-    border:2px solid #d6c6a5;
+    border:3px solid #d6c6a5;
+
+}
+
+
+#photoPreview div{
+
+    cursor:grab;
+
+}
+
+
+#photoPreview div:active{
+
+    cursor:grabbing;
 
 }
     
