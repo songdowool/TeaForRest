@@ -1605,110 +1605,28 @@ window.addEventListener("touchstart",(e)=>{
 window.addEventListener("touchend",(e)=>{
 
 
-    let touchEndY = e.changedTouches[0].clientY;
-
-
-
-    if(touchStartY - touchEndY > 50){
-
-
-        if(moving) return;
-
-
-        moving = true;
-
-
-        page = 1;
-
-
-
-        document
-        .getElementById("hero")
-        .classList.add("hide");
-
-
-        document
-        .getElementById("gallery")
-        .classList.add("show");
-
-
-        document
-        .getElementById("movingLine")
-        .classList.add("show");
-
-
-        document
-        .getElementById("recordButton")
-        .classList.add("show");
-
-
-
-        setTimeout(()=>{
-
-
-            document
-            .getElementById("movingLine")
-            .classList.add("move");
-
-
-        },100);
-
-
-
-        window.scrollTo({
-
-            top:window.innerHeight,
-
-            behavior:"smooth"
-
-        });
-
-
-
-        setTimeout(()=>{
-
-
-            moving=false;
-
-
-        },300);
-
-
-    }
-
-
-let touchStartY = 0;
-
-
-window.addEventListener("touchstart",(e)=>{
-
-    touchStartY = e.touches[0].clientY;
-
-});
-
-
-window.addEventListener("touchend",(e)=>{
-
     if(moving) return;
 
 
-    let touchEndY =
-    e.changedTouches[0].clientY;
+    let touchEndY = e.changedTouches[0].clientY;
 
 
-    let distance =
-    touchStartY - touchEndY;
+    let distance = touchStartY - touchEndY;
 
 
     if(Math.abs(distance) < 50){
+
         return;
+
     }
 
 
     moving = true;
 
 
+
     if(distance > 0){
+
 
         page = 1;
 
@@ -1733,7 +1651,9 @@ window.addEventListener("touchend",(e)=>{
         .classList.add("show");
 
 
+
         setTimeout(()=>{
+
 
             document
             .getElementById("movingLine")
@@ -1751,6 +1671,7 @@ window.addEventListener("touchend",(e)=>{
             behavior:"smooth"
 
         });
+
 
 
     }else{
@@ -1790,13 +1711,16 @@ window.addEventListener("touchend",(e)=>{
 
     setTimeout(()=>{
 
+
         moving = false;
 
 
     },300);
 
 
+
 });
+
     
 
     if(touchEndY - touchStartY > 50){
