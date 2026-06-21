@@ -1729,6 +1729,15 @@ function selectPhotos(event){
     Array.from(event.target.files);
 
 
+    renderPhotoPreview();
+
+}
+
+
+
+function renderPhotoPreview(){
+
+
     const preview =
     document.getElementById("photoPreview");
 
@@ -1736,51 +1745,179 @@ function selectPhotos(event){
     preview.innerHTML="";
 
 
-selectedPhotos.forEach((photo,index)=>{
-
-    let img =
-    document.createElement("img");
+    selectedPhotos.forEach((photo,index)=>{
 
 
-    img.src =
-    URL.createObjectURL(photo);
+        const box =
+        document.createElement("div");
 
 
-    img.dataset.index = index;
+        box.style.position="relative";
 
 
-    img.onclick = function(){
+        box.draggable = true;
 
-        document
-        .querySelectorAll("#photoPreview img")
-        .forEach((i)=>{
 
-            i.style.border="none";
+        box.dataset.index = index;
+
+
+
+        const img =
+        document.createElement("img");
+
+
+        img.src =
+        URL.createObjectURL(photo);
+
+
+
+        if(index === 0){
+
+            img.style.border="3px solid #d6c6a5";
+
+        }
+
+
+
+        img.onclick = function(){
+
+
+            document
+            .querySelectorAll("#photoPreview img")
+            .forEach((i)=>{
+
+                i.style.border="1px solid #4a3c2b";
+
+            });
+
+
+            this.style.border="3px solid #d6c6a5";
+
+
+            selectedPhotos.unshift(
+                selectedPhotos.splice(index,1)[0]
+            );
+
+
+            renderPhotoPreview();
+
+
+        };
+
+
+
+        const remove =
+        document.createElement("span");
+
+
+        remove.innerHTML="×";
+
+
+        remove.style.position="absolute";
+        remove.style.top="3px";
+        remove.style.right="6px";
+        remove.style.color="white";
+        remove.style.fontSize="20px";
+        remove.style.cursor="pointer";
+        remove.style.display="none";
+
+
+
+        box.onmouseenter=function(){
+
+            remove.style.display="block";
+
+        };
+
+
+        box.onmouseleave=function(){
+
+            remove.style.display="none";
+
+        };
+
+
+
+        remove.onclick=function(e){
+
+            e.stopPropagation();
+
+
+            selectedPhotos.splice(index,1);
+
+
+            renderPhotoPreview();
+
+        };
+
+
+
+
+        box.addEventListener("dragstart",function(e){
+
+            e.dataTransfer.setData(
+                "index",
+                index
+            );
 
         });
 
 
-        this.style.border="2px solid #d6c6a5";
+
+        box.addEventListener("dragover",function(e){
+
+            e.preventDefault();
+
+        });
 
 
-        selectedPhotos.unshift(
-            selectedPhotos.splice(index,1)[0]
-        );
 
-    };
+        box.addEventListener("drop",function(e){
 
 
-if(index === 0){
-
-    img.style.border="3px solid #d6c6a5";
-
-}
+            e.preventDefault();
 
 
-    preview.appendChild(img);
+            const from =
+            Number(
+                e.dataTransfer.getData("index")
+            );
 
 
-});
+            const to =
+            index;
+
+
+
+            const moved =
+            selectedPhotos.splice(from,1)[0];
+
+
+            selectedPhotos.splice(
+                to,
+                0,
+                moved
+            );
+
+
+            renderPhotoPreview();
+
+
+        });
+
+
+
+
+        box.appendChild(img);
+
+        box.appendChild(remove);
+
+
+        preview.appendChild(box);
+
+
+
+    });
 
 
 }
