@@ -791,13 +791,10 @@ button:hover{
 }
 
 }
-
-
-.card{
-    cursor:pointer;
+            
+.galleryModal-scroll{
+    overflow-y:auto;
 }
-            
-            
 </style>
 
 </head>
@@ -974,17 +971,14 @@ onclick="nextZoomImage()">❯</button>
 function openGalleryFromCard(card){
 
     console.log("카드:", card);
-
-    const box = card.closest(".preview-box");
-
-    console.log("박스:", box);
+    console.log("아이디:", card.dataset.id);
 
     images =
-    JSON.parse(box.dataset.images);
+    JSON.parse(card.dataset.images);
 
     currentIndex = 0;
 
-    currentTeaRecordId = Number(box.dataset.id);
+    currentTeaRecordId = Number(card.dataset.id);
 
     console.log("현재 저장 ID:", currentTeaRecordId);
 
@@ -1166,8 +1160,6 @@ modal.style.overflowY="auto";
 
 document.body.style.overflow="hidden";
 
-document.addEventListener("wheel", stopBackgroundScroll, {passive:false});
-
 
 setTimeout(()=>{
 
@@ -1311,8 +1303,7 @@ modal.style.opacity="0";
 
 document.body.style.overflow="auto";
 
-document.removeEventListener("wheel", stopBackgroundScroll);
-            
+
 document.getElementById("modalContent").innerHTML="";
 
 
@@ -1814,7 +1805,6 @@ data-images='${JSON.stringify(cardImages)}'
 onclick="openGalleryFromCard(this)"
 
 onmousemove="previewMove(event)">
-
 
 
 <img
