@@ -1871,6 +1871,9 @@ function openRecord(){
     modal.style.display="block";
 
 
+    document.body.style.overflow="hidden";
+
+
     setTimeout(()=>{
 
         modal.style.opacity="1";
@@ -1888,6 +1891,9 @@ function closeRecord(){
 
 
     modal.style.opacity="0";
+
+
+    document.body.style.overflow="auto";
 
 
     setTimeout(()=>{
