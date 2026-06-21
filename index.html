@@ -996,9 +996,12 @@ alert("저장 실패");
 
 else{
 
-alert("저장 완료");
+alert("수정 완료");
+
+await loadTeaDetail();
 
 }
+
 
 }
 
@@ -1155,11 +1158,11 @@ modal.style.opacity="1";
 
 showImage();
 
+setTimeout(()=>{
 
-loadTeaDetail();
+    loadTeaDetail();
 
-
-}
+},100);
 
 
 
