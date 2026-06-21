@@ -935,7 +935,7 @@ function openGalleryFromCard(card){
 
     currentIndex = 0;
 
-    currentTeaRecordId = card.dataset.id;
+    currentTeaRecordId = Number(card.dataset.id);
 
     openGallery();
 
@@ -1023,57 +1023,69 @@ allDots[index].classList.add("active");
 
 async function updateTeaRecord(){
 
-console.log(currentTeaRecordId);
-    
-const memo =
-document.getElementById("memoInput").value;
+    if(!currentTeaRecordId){
+
+        alert("차 기록 번호가 없습니다");
+
+        return;
+
+    }
 
 
-const amount =
-document.getElementById("amountInput").value;
+    const memo =
+    document.getElementById("memoInput").value;
 
 
-const temperature =
-document.getElementById("temperatureInput").value;
+    const amount =
+    document.getElementById("amountInput").value;
 
 
-const water =
-document.getElementById("waterInput").value;
+    const temperature =
+    document.getElementById("temperatureInput").value;
 
 
-
-const { data, error } =
-
-await supabaseClient
-.from("tea_records")
-.update({
-
-memo:memo,
-
-amount:amount,
-
-temperature:temperature,
-
-water:water
-
-})
-.eq("id", currentTeaRecordId);
+    const water =
+    document.getElementById("waterInput").value;
 
 
 
-if(error){
+    const { data, error } =
 
-console.log(error);
+    await supabaseClient
+    .from("tea_records")
+    .update({
 
-alert("수정 실패");
+        memo: memo,
 
-}
+        amount: amount,
 
-else{
+        temperature: temperature,
 
-alert("수정 완료");
+        water: water
 
-}
+    })
+    .eq(
+        "id",
+        currentTeaRecordId
+    );
+
+
+
+    if(error){
+
+        console.log(error);
+
+        alert("수정 실패");
+
+        return;
+
+    }
+
+
+    alert("수정 완료");
+
+
+    await loadTeaDetail();
 
 
 }
