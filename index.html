@@ -1839,8 +1839,10 @@ async function saveRecord(){
 
 
 
-    const photo =
-    selectedPhotos[0];
+const imageUrls = [];
+
+
+for(const photo of selectedPhotos){
 
 
     const fileName =
@@ -1883,8 +1885,16 @@ async function saveRecord(){
 
 
 
-    const imageUrl =
-    urlData.publicUrl;
+    imageUrls.push(
+        urlData.publicUrl
+    );
+
+
+}
+
+
+const imageUrl =
+imageUrls[0];
 
 
 
@@ -1899,6 +1909,8 @@ await supabaseClient
     tea_name:teaName,
 
     image_url:imageUrl,
+
+    images:imageUrls,
 
     created_at:date,
 
