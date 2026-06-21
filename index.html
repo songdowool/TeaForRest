@@ -757,20 +757,22 @@ button:hover{
 
 
 #photoPreview div{
-    transition:0.25s ease;
+
+    transition:0.08s ease;
+
 }
 
 
 #photoPreview .dragging{
 
-    transform:scale(1.08) translateY(-8px);
+    transform:translateY(-5px);
 
-    opacity:1;
+    opacity:0.85;
 
     z-index:10;
 
     box-shadow:
-    0 15px 25px rgba(0,0,0,0.5);
+    0 8px 15px rgba(0,0,0,0.4);
 
 }
 
@@ -1593,9 +1595,7 @@ setTimeout(()=>{
 
 moving = false;
 
-},1000);
-
-});
+},300);
 
 async function loadTeaRecords(){
 
