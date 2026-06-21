@@ -1602,48 +1602,40 @@ document.createElement("div");
 card.className="card";
 
 
-card.innerHTML = `
-
-<div class="preview-box"
-data-id="${tea.id}"
-data-images='${JSON.stringify(
-
-    
+const cardImages =
 tea.images && tea.images.length > 0
 ?
 tea.images
 :
 [
 tea.image_url
-]
-)}'
+];
+
+
+card.innerHTML = `
+
+<div class="preview-box"
+
+data-id="${tea.id}"
+
+data-images='${JSON.stringify(cardImages)}'
+
 onclick="openGalleryFromCard(this)"
+
 onmousemove="previewMove(event)">
 
 
-<img 
+<img
+
 class="previewImage"
-src="${
-tea.images && tea.images.length > 0
-?
-tea.images[0]
-:
-tea.image_url || "https://via.placeholder.com/600x400"
-}">
+
+src="${cardImages[0] || "https://via.placeholder.com/600x400"}">
 
 
 <div class="preview-dots">
 
 ${
-(
-(
-tea.images && tea.images.length > 0
-?
-tea.images.map((_,i)=>i)
-:
-[0]
-)
-.map((i)=>{
+cardImages.map((_,i)=>{
 
 return `<span class="${i===0 ? "active" : ""}"></span>`;
 
@@ -1664,7 +1656,9 @@ ${new Date(tea.created_at).toLocaleDateString("ko-KR")}
 
 
 <h3>
+
 ${tea.tea_name || "이름 없는 차"}
+
 </h3>
 
 
@@ -1676,7 +1670,6 @@ ${new Date(tea.created_at).toLocaleDateString("ko-KR")}
 
 
 `;
-
 
 
 gallery.appendChild(card);
