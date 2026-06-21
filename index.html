@@ -816,6 +816,15 @@ button:hover{
     cursor:grabbing;
 
 }
+
+
+#photoPreview img{
+
+    user-select:none;
+
+    -webkit-user-drag:none;
+
+}
     
 </style>
 
@@ -1927,16 +1936,23 @@ function renderPhotoPreview(){
 
 
 
-        box.addEventListener("dragstart",function(e){
+            box.addEventListener("dragstart",function(e){
 
-            e.dataTransfer.setData(
-                "index",
-                index
-            );
+                e.dataTransfer.setData(
+                    "index",
+                    index
+                );
+
+
+    e.dataTransfer.effectAllowed = "move";
+
 
     box.classList.add("dragging");
 
+
 });
+
+
 
 
 box.addEventListener("dragend",function(){
