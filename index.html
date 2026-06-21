@@ -1160,6 +1160,17 @@ modal.style.overflowY="auto";
 
 document.body.style.overflow="hidden";
 
+            
+document.getElementById("galleryModal").addEventListener(
+"wheel",
+function(e){
+
+e.stopPropagation();
+
+},
+{passive:true}
+);
+            
 
 setTimeout(()=>{
 
@@ -1871,6 +1882,20 @@ function openRecord(){
     modal.style.display="block";
 
 
+    document.body.style.overflow="hidden";
+
+
+    modal.addEventListener(
+    "wheel",
+    function(e){
+
+        e.stopPropagation();
+
+    },
+    {passive:true}
+    );
+
+
     setTimeout(()=>{
 
         modal.style.opacity="1";
@@ -1888,6 +1913,9 @@ function closeRecord(){
 
 
     modal.style.opacity="0";
+
+
+    document.body.style.overflow="auto";
 
 
     setTimeout(()=>{
