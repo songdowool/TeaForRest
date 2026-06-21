@@ -231,6 +231,10 @@ footer{
     z-index:20000;
 }
 
+#editModal{
+    z-index:30000;
+}
+
 
 .modal-content{
     display:block;
@@ -644,7 +648,9 @@ button:hover{
 
     text-align:center;
 
-    margin-top:40px;
+    margin-top:20px;
+
+    margin-bottom:20px;
 
 }
 
@@ -887,6 +893,20 @@ button:hover{
 
 }
 
+#editPhotoPreview{
+
+    display:flex;
+
+    gap:8px;
+
+    flex-wrap:wrap;
+
+    justify-content:center;
+
+    margin-top:15px;
+
+}
+
 </style>
 
 </head>
@@ -1001,6 +1021,74 @@ onclick="saveRecord()">
 
 
 </div>
+
+
+
+<div id="editModal" class="modal">
+
+<span class="close" onclick="closeEdit()">×</span>
+
+<div class="tea-detail record-box">
+
+<h2>
+차 기록 변경
+</h2>
+
+<p class="input-title">
+이름
+</p>
+
+<input id="editTeaNameInput" type="text">
+
+<p class="input-title">
+날짜
+</p>
+
+<div class="date-center">
+<div class="date-box-input">
+
+<select id="editYearInput"></select>
+<span>년</span>
+
+<select id="editMonthInput"></select>
+<span>월</span>
+
+<select id="editDayInput"></select>
+<span>일</span>
+
+</div>
+</div>
+
+<div class="photo-select">
+
+<label for="editPhotoInput">
+사진 선택
+</label>
+
+<input
+id="editPhotoInput"
+type="file"
+accept="image/*"
+multiple
+onchange="selectEditPhotos(event)"
+style="display:none">
+
+</div>
+
+<div id="editPhotoPreview"></div>
+
+<button
+class="save-button"
+onclick="updateEditRecord()">
+
+수정 저장
+
+</button>
+
+</div>
+
+</div>
+
 
 <footer>
 
@@ -1380,7 +1468,7 @@ margin-top:20px;
 </button>
 
 
-<button class="save-button" onclick="openPhotoManager()">
+<button class="save-button" onclick="openEdit()">
 
 대표/사진 변경 및 추가
 
@@ -1649,65 +1737,7 @@ showImage();
 
 }
 
-function previewMove(event){
 
-let box = event.currentTarget;
-
-
-let img =
-box.querySelector(".previewImage");
-
-
-let images =
-JSON.parse(
-box.dataset.images
-);
-
-
-let width =
-box.offsetWidth;
-
-
-let x =
-event.offsetX;
-
-
-let index =
-Math.floor(
-(x / width) * images.length
-);
-
-
-if(index >= images.length){
-
-index = images.length - 1;
-
-}
-
-
-img.src =
-images[index];
-
-
-let dots =
-box.querySelectorAll(".preview-dots span");
-
-
-dots.forEach(dot=>{
-
-dot.classList.remove("active");
-
-});
-
-
-if(dots[index]){
-
-dots[index].classList.add("active");
-
-}
-
-
-}
 
 let page = 0;
 let moving = false;
@@ -1992,34 +2022,40 @@ document.createElement("div");
 card.className="card";
 
 
-const cardImages =
+let cardImages =
 tea.images && tea.images.length > 0
 ?
-tea.images
+[...tea.images]
 :
 [
 tea.image_url
 ];
 
+// ✅ 대표사진을 항상 맨 앞으로
+const mainImage = tea.image_url;
+
+const mainIndex = cardImages.indexOf(mainImage);
+
+if(mainIndex > -1){
+    cardImages.splice(mainIndex, 1);
+}
+
+cardImages.unshift(mainImage);
+
 
 card.innerHTML = `
 
 <div class="preview-box"
-
 data-id="${tea.id}"
-
 data-images='${JSON.stringify(cardImages)}'
-
-onclick="openGalleryFromCard(this)"
-
-onmousemove="previewMove(event)">
+onclick="openGalleryFromCard(this)">
 
 
 <img
 
 class="previewImage"
 
-src="${cardImages[0] || "https://via.placeholder.com/600x400"}">
+src="${tea.image_url || "https://via.placeholder.com/600x400"}">
 
 
 <div class="preview-dots">
@@ -2065,6 +2101,97 @@ ${new Date(tea.created_at).toLocaleDateString("ko-KR")}
 gallery.appendChild(card);
 
 
+const previewBox = card.querySelector(".preview-box");
+const previewImage = card.querySelector(".previewImage");
+const dots = card.querySelectorAll(".preview-dots span");
+
+
+let previewIndex = 0;
+
+
+previewBox.addEventListener("mousemove",(e)=>{
+
+
+if(cardImages.length <= 1){
+
+    return;
+
+}
+
+
+const rect = previewBox.getBoundingClientRect();
+
+
+const mouseX = e.clientX - rect.left;
+
+
+const ratio = mouseX / rect.width;
+
+
+let newIndex = Math.floor(
+    ratio * cardImages.length
+);
+
+// 👉 범위 제한 (핵심)
+if(newIndex >= cardImages.length){
+    newIndex = cardImages.length - 1;
+}
+
+
+
+if(newIndex >= cardImages.length){
+
+    newIndex = cardImages.length - 1;
+
+}
+
+
+
+if(newIndex !== previewIndex){
+
+
+// 👉 previewIndex 건드리지 마라
+if(cardImages[newIndex]){
+    previewImage.src = cardImages[newIndex];
+}
+
+
+dots.forEach(dot=>{
+    dot.classList.remove("active");
+});
+
+// 👉 존재할 때만 실행 (핵심)
+if(dots[newIndex]){
+    dots[newIndex].classList.add("active");
+}
+
+
+}
+
+
+
+});
+
+
+previewBox.addEventListener("mouseleave",()=>{
+
+    previewIndex = 0;
+
+    // 👉 대표사진으로 복귀
+    previewImage.src = cardImages[0];
+
+    dots.forEach(dot=>{
+        dot.classList.remove("active");
+    });
+
+    if(dots[0]){
+        dots[0].classList.add("active");
+    }
+
+});
+
+
+
 });
 
 
@@ -2075,14 +2202,10 @@ function openRecord(){
     const modal =
     document.getElementById("recordModal");
 
-
     modal.style.display="block";
 
-
     setTimeout(()=>{
-
         modal.style.opacity="1";
-
     },10);
 
 }
@@ -2110,7 +2233,92 @@ function closeRecord(){
 
 let selectedPhotos = [];
 
+let mainPhotoIndex = 0;
 
+let editSelectedPhotos = [];
+let editMainPhotoIndex = 0;
+
+function selectEditPhotos(event){
+
+const newPhotos =
+Array.from(event.target.files);
+
+
+editSelectedPhotos =
+editSelectedPhotos.concat(newPhotos);
+
+
+renderEditPhotoPreview();
+
+}
+
+function renderEditPhotoPreview(){
+
+const preview =
+document.getElementById("editPhotoPreview");
+
+preview.innerHTML = "";
+
+
+editSelectedPhotos.forEach((photo,index)=>{
+
+
+const img =
+document.createElement("img");
+
+
+if(typeof photo === "string"){
+
+    img.src = photo;
+
+}else{
+
+    img.src =
+    URL.createObjectURL(photo);
+
+}
+
+
+img.style.width="112px";
+
+img.style.height="112px";
+
+img.style.objectFit="cover";
+
+img.style.margin="5px";
+
+img.style.cursor="pointer";
+
+// ✅ 대표사진 표시
+if(index === editMainPhotoIndex){
+    img.style.border = "3px solid #d6c6a5";
+}else{
+    img.style.border = "1px solid #4a3c2b";
+}
+
+
+// ✅ 클릭 시 대표사진 변경
+img.onclick = function(){
+
+    editMainPhotoIndex = index;
+
+    document
+    .querySelectorAll("#editPhotoPreview img")
+    .forEach((photo)=>{
+        photo.style.border = "1px solid #4a3c2b";
+    });
+
+    img.style.border = "3px solid #d6c6a5";
+};
+
+
+preview.appendChild(img);
+
+
+});
+
+
+}
 
 function selectPhotos(event){
 
@@ -2158,41 +2366,25 @@ function renderPhotoPreview(){
 
         img.src =
         URL.createObjectURL(photo);
-
-
-
-        if(index === 0){
-
-            img.style.border="3px solid #d6c6a5";
-
-        }
-
-
-
+        
         img.onclick = function(){
 
 
-            document
-            .querySelectorAll("#photoPreview img")
-            .forEach((i)=>{
-
-                i.style.border="1px solid #4a3c2b";
-
-            });
+        mainPhotoIndex = index;
 
 
-            this.style.border="3px solid #d6c6a5";
+         renderPhotoPreview();
 
 
-            selectedPhotos.unshift(
-                selectedPhotos.splice(index,1)[0]
-            );
+};
 
 
-            renderPhotoPreview();
+        if(index === mainPhotoIndex){
+   
+            img.style.border="3px solid #d6c6a5";
 
+        }   
 
-        };
 
 
 
@@ -2233,11 +2425,17 @@ function renderPhotoPreview(){
             e.stopPropagation();
 
 
-            selectedPhotos.splice(index,1);
+selectedPhotos.splice(index,1);
 
 
-            renderPhotoPreview();
+if(mainPhotoIndex >= selectedPhotos.length){
 
+    mainPhotoIndex = 0;
+
+}
+
+
+renderPhotoPreview();
         };
 
 
@@ -2473,45 +2671,350 @@ await supabaseClient
 
 window.addEventListener("load",()=>{
 
-
 const year = document.getElementById("yearInput");
 const month = document.getElementById("monthInput");
 const day = document.getElementById("dayInput");
 
+const editYear = document.getElementById("editYearInput");
+const editMonth = document.getElementById("editMonthInput");
+const editDay = document.getElementById("editDayInput");
 
 for(let i=2020;i<=2030;i++){
 
     year.innerHTML += `<option>${i}</option>`;
+    editYear.innerHTML += `<option>${i}</option>`;
 
 }
-
 
 for(let i=1;i<=12;i++){
 
     month.innerHTML += `<option>${i}</option>`;
+    editMonth.innerHTML += `<option>${i}</option>`;
 
 }
-
 
 for(let i=1;i<=31;i++){
 
     day.innerHTML += `<option>${i}</option>`;
+    editDay.innerHTML += `<option>${i}</option>`;
+
+}
+
+loadTeaRecords();
+
+});
+
+
+async function openEdit(){
+
+const modal =
+document.getElementById("editModal");
+
+const { data, error } =
+await supabaseClient
+.from("tea_records")
+.select("*")
+.eq("id", currentTeaRecordId)
+.single();
+
+
+if(error){
+
+console.log(error);
+
+return;
 
 }
 
 
-loadTeaRecords();
+
+// 이름 기존 유지
+
+document.getElementById("editTeaNameInput").value =
+data.tea_name ?? "";
+
+
+
+// 날짜 기존 유지
+
+const date =
+new Date(data.created_at);
+
+
+document.getElementById("editYearInput").value =
+date.getFullYear();
+
+
+document.getElementById("editMonthInput").value =
+date.getMonth()+1;
+
+
+document.getElementById("editDayInput").value =
+date.getDate();
+
+
+
+
+
+// 여기부터 사진 관리 추가
+
+const preview =
+document.getElementById("editPhotoPreview");
+
+
+preview.innerHTML="";
+
+
+
+const savedImages =
+data.images || [];
+
+editSelectedPhotos = [...savedImages];
+
+savedImages.forEach((image,index)=>{
+
+
+const img =
+document.createElement("img");
+
+
+img.src = image;
+
+
+img.style.width="110px";
+
+img.style.height="110px";
+
+img.style.objectFit="cover";
+
+img.style.margin="5px";
+
+img.style.cursor="pointer";
+
+img.style.border =
+index === 0
+?
+"3px solid #d6c6a5"
+:
+"1px solid #4a3c2b";
+
+
+
+img.onclick=function(){
+
+editMainPhotoIndex = index;
+
+document
+.querySelectorAll("#editPhotoPreview img")
+.forEach((photo)=>{
+
+photo.style.border =
+"1px solid #4a3c2b";
+
+});
+
+img.style.border =
+"3px solid #d6c6a5";
+
+};
+
+
+
+preview.appendChild(img);
+
 
 
 });
 
 
+
+
+
+modal.style.display="block";
+
+
+setTimeout(()=>{
+
+modal.style.opacity="1";
+
+},10);
+
+
+
+}
+
+
+
+function closeEdit(){
+
+const modal =
+document.getElementById("editModal");
+
+modal.style.opacity="0";
+
+setTimeout(()=>{
+
+modal.style.display="none";
+
+},500);
+
+}
+
+async function updateEditRecord(){
+
+const teaName =
+document.getElementById("editTeaNameInput").value;
+
+
+const year =
+document.getElementById("editYearInput").value;
+
+
+const month =
+document.getElementById("editMonthInput").value;
+
+
+const day =
+document.getElementById("editDayInput").value;
+
+
+const date =
+`${year}-${month}-${day}`;
+
+
+
+const { data:oldData, error:oldError } =
+
+await supabaseClient
+.from("tea_records")
+.select("*")
+.eq("id", currentTeaRecordId)
+.single();
+
+
+
+if(oldError){
+
+console.log(oldError);
+
+alert("기존 데이터 불러오기 실패");
+
+return;
+
+}
+
+
+
+let imageUrls = oldData.images || [];
+
+
+
+if(editSelectedPhotos.length > 0){
+
+
+imageUrls = [];
+
+for(const photo of editSelectedPhotos){
+
+// ✅ 기존 이미지 (URL)
+if(typeof photo === "string"){
+
+    imageUrls.push(photo);
+    continue;
+
+}
+
+// ✅ 새로 추가한 파일만 업로드
+const fileName =
+`${Date.now()}_${photo.name}`;
+
+const { error:uploadError } =
+
+await supabaseClient
+.storage
+.from("tea-images")
+.upload(
+fileName,
+photo
+);
+
+if(uploadError){
+
+console.log(uploadError);
+
+alert("사진 업로드 실패");
+
+return;
+
+}
+
+const { data:urlData } =
+
+supabaseClient
+.storage
+.from("tea-images")
+.getPublicUrl(fileName);
+
+imageUrls.push(
+urlData.publicUrl
+);
+
+}
+
+
+}
+
+
+
+const { error } =
+
+await supabaseClient
+.from("tea_records")
+.update({
+
+tea_name:teaName,
+
+created_at:date,
+
+image_url:imageUrls[editMainPhotoIndex],
+
+images:imageUrls
+
+})
+.eq(
+"id",
+currentTeaRecordId
+);
+
+
+
+if(error){
+
+console.log(error);
+
+alert("수정 실패");
+
+return;
+
+}
+
+
+
+alert("수정 완료");
+
+
+closeEdit();
+
+
+location.reload();
+
+
+}
+
 async function openPhotoManager(){
 
-
     const modal =
-    document.getElementById("recordModal");
-
+    document.getElementById("editModal");
 
     const { data, error } =
     await supabaseClient
@@ -2519,7 +3022,6 @@ async function openPhotoManager(){
     .select("*")
     .eq("id", currentTeaRecordId)
     .single();
-
 
     if(error){
 
@@ -2529,39 +3031,22 @@ async function openPhotoManager(){
 
     }
 
-
-    document.getElementById("recordTitle").innerHTML =
-    "어떤 차를 기록할까요?";
-
-
-    document.getElementById("teaNameInput").value =
+    document.getElementById("editTeaNameInput").value =
     data.tea_name ?? "";
-
 
     const date =
     new Date(data.created_at);
 
-
-    document.getElementById("yearInput").value =
+    document.getElementById("editYearInput").value =
     date.getFullYear();
 
-
-    document.getElementById("monthInput").value =
+    document.getElementById("editMonthInput").value =
     date.getMonth()+1;
 
-
-    document.getElementById("dayInput").value =
+    document.getElementById("editDayInput").value =
     date.getDate();
 
-
-    selectedPhotos = [];
-
-
-    document.getElementById("photoPreview").innerHTML="";
-
-
     modal.style.display="block";
-
 
     setTimeout(()=>{
 
@@ -2569,9 +3054,7 @@ async function openPhotoManager(){
 
     },10);
 
-
 }
-
 
     
 </script>
