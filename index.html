@@ -222,6 +222,16 @@ footer{
 }
 
 
+#galleryModal{
+    z-index:9999;
+}
+
+
+#recordModal{
+    z-index:20000;
+}
+
+
 .modal-content{
     display:block;
     margin:auto;
@@ -324,10 +334,15 @@ footer{
 
 
 .image-zoom img{
+
     display:block;
-    max-width:85%;
-    max-height:85%;
-    margin:60px auto;
+
+    max-width:65%;
+
+    max-height:65%;
+
+    margin:80px auto;
+
 }
 
 .zoom-close{
@@ -341,14 +356,25 @@ footer{
 
 
 .zoom-nav{
+
     position:absolute;
+
     top:50%;
+
     transform:translateY(-50%);
+
     background:none;
+
     border:none;
+
     color:white;
+
     font-size:50px;
+
     cursor:pointer;
+
+    z-index:10001;
+
 }
 
 
@@ -795,6 +821,72 @@ button:hover{
 .galleryModal-scroll{
     overflow-y:auto;
 }
+
+.zoom-thumbnails{
+
+    position:absolute;
+
+    bottom:20px;
+
+    left:50%;
+
+    transform:translateX(-50%);
+
+    display:flex;
+
+    gap:10px;
+
+    max-width:90%;
+
+    overflow-x:auto;
+
+}
+
+
+.zoom-thumbnails img{
+
+    width:70px;
+
+    height:70px;
+
+    object-fit:cover;
+
+    border:2px solid transparent;
+
+    cursor:pointer;
+
+}
+
+
+.zoom-thumbnails img.active{
+
+    border:2px solid #d6c6a5;
+
+}
+
+
+.zoom-count{
+
+    position:absolute;
+
+    bottom:200px;
+
+    left:50%;
+
+    transform:translateX(-50%);
+
+    color:#d6c6a5;
+
+    font-family:"Noto Serif KR", serif;
+
+    font-size:14px;
+
+    letter-spacing:3px;
+
+    opacity:0.9;
+
+}
+
 </style>
 
 </head>
@@ -841,7 +933,7 @@ button:hover{
 <div class="tea-detail record-box">
 
 
-<h2>
+<h2 id="recordTitle">
 무슨 차를 마셨나요?
 </h2>
 
@@ -955,6 +1047,12 @@ onclick="prevZoomImage()">❮</button>
 
 
 <img id="zoomImage">
+
+
+<div id="zoomCount" class="zoom-count"></div>
+
+
+<div id="zoomThumbnails" class="zoom-thumbnails"></div>
 
 
 <button class="zoom-nav zoom-right"
@@ -1160,17 +1258,6 @@ modal.style.overflowY="auto";
 
 document.body.style.overflow="hidden";
 
-            
-document.getElementById("galleryModal").addEventListener(
-"wheel",
-function(e){
-
-e.stopPropagation();
-
-},
-{passive:true}
-);
-            
 
 setTimeout(()=>{
 
@@ -1281,9 +1368,25 @@ onclick="zoomImage('${file}')">
 
 <textarea id="memoInput" placeholder="차에 대한 기록을 남겨주세요"></textarea>
 
+<div style="
+display:flex;
+justify-content:flex-start;
+gap:10px;
+margin-top:20px;
+">
+
 <button class="save-button" onclick="updateTeaRecord()">
 수정 저장
 </button>
+
+
+<button class="save-button" onclick="openPhotoManager()">
+
+대표/사진 변경 및 추가
+
+</button>
+
+</div>
 
 </div>
 
@@ -1344,7 +1447,15 @@ currentIndex=0;
 }
 
 
-showImage();
+let img =
+document.querySelector(".zoom-image");
+
+
+if(img){
+
+img.src = images[currentIndex];
+
+}
 
 
 }
@@ -1366,7 +1477,15 @@ currentIndex=images.length-1;
 }
 
 
-showImage();
+let img =
+document.querySelector(".zoom-image");
+
+
+if(img){
+
+img.src = images[currentIndex];
+
+}
 
 
 }
@@ -1392,12 +1511,82 @@ img.src = images[currentIndex];
 zoom.style.display="block";
 
 
+renderZoomThumbnails();
+
+
 }
 
 
 
 function nextZoomImage(){
 
+function renderZoomThumbnails(){
+
+
+let box =
+document.getElementById("zoomThumbnails");
+
+
+let count =
+document.getElementById("zoomCount");
+
+
+
+box.innerHTML="";
+
+
+
+images.forEach((image,index)=>{
+
+
+let thumb =
+document.createElement("img");
+
+
+thumb.src=image;
+
+
+
+if(index === currentIndex){
+
+thumb.classList.add("active");
+
+}
+
+
+
+thumb.onclick=function(){
+
+
+currentIndex=index;
+
+
+document
+.getElementById("zoomImage")
+.src =
+images[currentIndex];
+
+
+renderZoomThumbnails();
+
+
+};
+
+
+
+box.appendChild(thumb);
+
+
+
+});
+
+
+
+count.innerHTML =
+`${currentIndex + 1} / ${images.length}`;
+
+
+}
 
 currentIndex++;
 
@@ -1413,6 +1602,9 @@ document.getElementById("zoomImage").src =
 images[currentIndex];
 
 
+renderZoomThumbnails();
+
+
 }
 
 
@@ -1425,13 +1617,18 @@ currentIndex--;
 
 if(currentIndex < 0){
 
-currentIndex=images.length-1;
+    currentIndex = images.length - 1;
 
 }
 
 
-document.getElementById("zoomImage").src =
+document
+.getElementById("zoomImage")
+.src =
 images[currentIndex];
+
+
+renderZoomThumbnails();
 
 
 }
@@ -1882,20 +2079,6 @@ function openRecord(){
     modal.style.display="block";
 
 
-    document.body.style.overflow="hidden";
-
-
-    modal.addEventListener(
-    "wheel",
-    function(e){
-
-        e.stopPropagation();
-
-    },
-    {passive:true}
-    );
-
-
     setTimeout(()=>{
 
         modal.style.opacity="1";
@@ -1913,9 +2096,6 @@ function closeRecord(){
 
 
     modal.style.opacity="0";
-
-
-    document.body.style.overflow="auto";
 
 
     setTimeout(()=>{
@@ -2324,6 +2504,75 @@ loadTeaRecords();
 
 
 });
+
+
+async function openPhotoManager(){
+
+
+    const modal =
+    document.getElementById("recordModal");
+
+
+    const { data, error } =
+    await supabaseClient
+    .from("tea_records")
+    .select("*")
+    .eq("id", currentTeaRecordId)
+    .single();
+
+
+    if(error){
+
+        console.log(error);
+
+        return;
+
+    }
+
+
+    document.getElementById("recordTitle").innerHTML =
+    "어떤 차를 기록할까요?";
+
+
+    document.getElementById("teaNameInput").value =
+    data.tea_name ?? "";
+
+
+    const date =
+    new Date(data.created_at);
+
+
+    document.getElementById("yearInput").value =
+    date.getFullYear();
+
+
+    document.getElementById("monthInput").value =
+    date.getMonth()+1;
+
+
+    document.getElementById("dayInput").value =
+    date.getDate();
+
+
+    selectedPhotos = [];
+
+
+    document.getElementById("photoPreview").innerHTML="";
+
+
+    modal.style.display="block";
+
+
+    setTimeout(()=>{
+
+        modal.style.opacity="1";
+
+    },10);
+
+
+}
+
+
     
 </script>
 
