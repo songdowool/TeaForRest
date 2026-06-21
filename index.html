@@ -958,56 +958,6 @@ const supabaseClient = supabase.createClient(
 
 let images = [];
 
-
-async function saveTeaRecord(){
-
-const memo =
-document.getElementById("memoInput").value;
-
-
-const amount =
-document.getElementById("amountInput").value;
-
-
-const temperature =
-document.getElementById("temperatureInput").value;
-
-
-const water =
-document.getElementById("waterInput").value;
-
-
-
-const { data, error } =
-await supabaseClient
-.from("tea_records")
-.insert([
-{
-memo: memo,
-amount: amount,
-temperature: temperature,
-water: water
-}
-]);
-
-
-
-if(error){
-
-console.log(error);
-
-alert("저장 실패");
-
-}
-
-else{
-
-alert("저장 완료");
-
-}
-
-}
-
     
 function updateDots(index){
 
