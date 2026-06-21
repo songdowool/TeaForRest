@@ -683,6 +683,26 @@ button:hover{
 
 }
 
+#photoPreview img{
+
+    user-select:none;
+    -webkit-user-drag:none;
+
+}
+
+
+.photo-dragging{
+
+    opacity:1;
+
+    transform:scale(1.08) translateY(-8px);
+
+    box-shadow:0 15px 25px rgba(0,0,0,0.5);
+
+    z-index:10;
+
+}
+    
 
 #photoPreview img:hover{
 
@@ -1780,11 +1800,24 @@ function renderPhotoPreview(){
 
         box.style.position="relative";
 
-
         box.draggable = true;
 
 
         box.dataset.index = index;
+
+
+        box.ondragstart = function(){
+
+            this.classList.add("photo-dragging");
+
+        };
+
+
+        box.ondragend = function(){
+
+    this.classList.remove("photo-dragging");
+
+};
 
 
 
