@@ -1547,6 +1547,12 @@ document
 
 window.addEventListener("wheel",(e)=>{
 
+if(document.getElementById("recordModal").style.display === "block"){
+    e.preventDefault();
+    return;
+}
+
+
 if(moving) return;
 
 moving = true;
@@ -1625,9 +1631,14 @@ let touchStartY = 0;
 
 window.addEventListener("touchstart",(e)=>{
 
+    if(document.getElementById("recordModal").style.display === "block"){
+        e.preventDefault();
+        return;
+    }
+
     touchStartY = e.touches[0].clientY;
 
-});
+},{passive:false});
 
 
 
