@@ -424,11 +424,17 @@ footer{
 @media(max-width:768px){
 
 header{
-    height:40vh;
+    height:100vh;
 }
 
-.gallery-wrapper{
-    margin-top:0;
+.gallery{
+    width:90vw;
+    grid-template-columns:1fr;
+    padding:30px 20px;
+}
+
+.card img{
+    height:250px;
 }
 
 }
@@ -1721,60 +1727,7 @@ window.addEventListener("touchend",(e)=>{
 
 });
 
-    
-
-    if(touchEndY - touchStartY > 50){
-
-
-        if(moving) return;
-
-
-        moving=true;
-
-
-        page=0;
-
-
-
-        document
-        .getElementById("hero")
-        .classList.remove("hide");
-
-
-        document
-        .getElementById("movingLine")
-        .classList.remove("move");
-
-
-        document
-        .getElementById("recordButton")
-        .classList.remove("show");
-
-
-
-        window.scrollTo({
-
-            top:0,
-
-            behavior:"smooth"
-
-        });
-
-
-
-        setTimeout(()=>{
-
-
-            moving=false;
-
-
-        },300);
-
-
-    }
-
-
-});    
+  
 
 
 async function loadTeaRecords(){
