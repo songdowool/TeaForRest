@@ -791,7 +791,10 @@ button:hover{
 }
 
 }
-    
+            
+.galleryModal-scroll{
+    overflow-y:auto;
+}
 </style>
 
 </head>
@@ -1152,6 +1155,12 @@ document.getElementById("galleryModal");
 modal.style.display="block";
 
 
+modal.style.overflowY="auto";
+
+
+document.body.style.overflow="hidden";
+
+
 setTimeout(()=>{
 
 modal.style.opacity="1";
@@ -1292,9 +1301,10 @@ document.getElementById("galleryModal");
 modal.style.opacity="0";
 
 
+document.body.style.overflow="auto";
+
 
 document.getElementById("modalContent").innerHTML="";
-
 
 
 setTimeout(()=>{
@@ -1302,7 +1312,6 @@ setTimeout(()=>{
 modal.style.display="none";
 
 },500);
-
 
 
 }
