@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+            <!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
@@ -414,7 +414,7 @@ footer{
 
 .hero-line.move{
 
-    transform:translateY(100vh);
+    transform:translateY(50vh);
 
     opacity:1;
 
@@ -1684,12 +1684,12 @@ window.addEventListener("touchend",(e)=>{
 
 
 
-        window.scrollTo({
+            window.scrollTo({
 
-            top:window.innerHeight,
+                top:document.querySelector(".gallery-wrapper").offsetTop,
 
-            behavior:"smooth"
-
+                behavior:"smooth"
+    
         });
 
 
