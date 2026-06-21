@@ -791,10 +791,9 @@ button:hover{
 }
 
 }
-            
-.galleryModal-scroll{
-    overflow-y:auto;
-}
+
+
+let images = [];
 
 
 function stopBackgroundScroll(e){
@@ -805,11 +804,11 @@ function stopBackgroundScroll(e){
 
     if(modal.style.display === "block"){
 
-        e.stopPropagation();
+        e.preventDefault();
 
     }
 
-}
+}            
             
 </style>
 
