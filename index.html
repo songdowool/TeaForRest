@@ -35,6 +35,7 @@ header{
 header.hide{
     transform:translateY(-100vh);
     opacity:0;
+    pointer-events:none;
 }
 
 .hero-line{
@@ -181,7 +182,7 @@ h1{
 .tea-date{
     text-align:center;
     color:#8c7a5d;
-    font-size:13px;
+    font-size:15px;
     margin-top:-10px;
     margin-bottom:15px;
 }
@@ -907,6 +908,252 @@ button:hover{
 
 }
 
+#editPhotoPreview .dragging{
+    transform:scale(1.04) translateY(-4px);
+    opacity:1;
+    z-index:10;
+    box-shadow:0 8px 15px rgba(0,0,0,0.5);
+}
+
+#editPhotoPreview .dragging img{
+    border:2px solid #d6c6a5;
+}
+
+.card button{
+    opacity:0;
+    transition:opacity 0.3s ease;
+    pointer-events:none;
+}
+
+.card:hover button{
+    opacity:1;
+    pointer-events:auto;
+}
+
+.delete-modal{
+
+    display:none;
+
+    position:fixed;
+
+    left:0;
+    top:0;
+
+    width:100%;
+    height:100%;
+
+    background:rgba(0,0,0,0.75);
+
+    backdrop-filter:blur(3px);
+
+    z-index:50000;
+
+    opacity:0;
+
+    transition:opacity 0.4s ease;
+
+}
+
+
+
+.delete-box{
+
+
+    position:absolute;
+
+    left:50%;
+    top:50%;
+
+
+    transform:translate(-50%,-50%);
+
+
+    width:320px;
+
+
+    background:#1c1713;
+
+
+    border:1px solid #6b5940;
+
+
+    padding:45px 40px;
+
+
+    text-align:center;
+
+
+    color:#d6c6a5;
+
+
+    box-shadow:
+
+    0 15px 40px rgba(0,0,0,0.6),
+
+    inset 0 0 20px rgba(255,255,255,0.03);
+
+
+}
+
+
+
+.delete-box{
+
+    position:absolute;
+
+    left:50%;
+    top:50%;
+
+    transform:translate(-50%,-50%);
+
+
+    width:230px;
+
+
+    background:#211b17;
+
+
+    border:1px solid rgba(214,198,165,0.28);
+
+
+    border-radius:12px;
+
+
+    padding:35px 30px;
+
+
+    text-align:center;
+
+
+    color:#d6c6a5;
+
+
+    box-shadow:
+오후 5:13 2026-06-22
+    0 15px 35px rgba(0,0,0,0.45);
+
+}
+
+.alert-modal{
+
+    display:none;
+
+    position:fixed;
+
+    left:0;
+    top:0;
+
+    width:100%;
+    height:100%;
+
+    background:rgba(0,0,0,0.75);
+
+    backdrop-filter:blur(3px);
+
+    z-index:60000;
+
+    opacity:0;
+
+    transition:opacity 0.4s ease;
+
+}
+
+
+.alert-box{
+
+    position:absolute;
+
+    left:50%;
+    top:50%;
+
+    transform:translate(-50%,-50%);
+
+    width:230px;
+
+    background:#211b17;
+
+    border:1px solid rgba(214,198,165,0.28);
+
+    border-radius:12px;
+
+    padding:35px 30px;
+
+    text-align:center;
+
+    color:#d6c6a5;
+
+    box-shadow:
+    0 15px 35px rgba(0,0,0,0.45);
+
+}
+
+.scroll-arrow{
+
+    position:fixed;
+
+    bottom:35px;
+
+    left:50%;
+
+    transform:translateX(-50%);
+
+    color:#d6c6a5;
+
+    font-size:20px;
+
+    opacity:1;
+
+    animation:
+    arrowMotion 2s ease-in-out infinite;
+
+    z-index:9999;
+
+    transition:opacity 0.8s ease;
+
+}
+
+
+.scroll-arrow.hide{
+
+    opacity:0;
+
+    pointer-events:none;
+
+}
+
+
+@keyframes arrowMotion{
+
+    0%{
+
+        opacity:0.15;
+
+        transform:translateX(-50%) translateY(0);
+
+    }
+
+
+    50%{
+
+        opacity:1;
+
+        transform:translateX(-50%) translateY(8px);
+
+    }
+
+
+    100%{
+
+        opacity:0.15;
+
+        transform:translateX(-50%) translateY(0);
+
+    }
+
+}
+
+
+
 </style>
 
 </head>
@@ -919,10 +1166,14 @@ button:hover{
 <h1>Tea For Rest</h1>
 
 <p class="subtitle">
-제가 마신 차 구경해주세요.
+마신 차를 기록하세요.
 </p>
 
 <div class="hero-line" id="movingLine"></div>
+
+<div class="scroll-arrow">
+▼
+</div>
 
 </header>
 
@@ -1206,7 +1457,7 @@ async function updateTeaRecord(){
 
     if(!currentTeaRecordId){
 
-        alert("차 기록 번호가 없습니다");
+        showAlert("차 기록 번호가 없습니다");
 
         return;
 
@@ -1256,7 +1507,7 @@ async function updateTeaRecord(){
 
         console.log(error);
 
-        alert("수정 실패");
+        showAlert("수정 실패");
 
         return;
 
@@ -1265,7 +1516,8 @@ async function updateTeaRecord(){
 
 console.log("수정 결과:", data);
 
-alert("수정 완료");
+showAlert("수정 완료");
+
 
 console.log("저장된 ID:", currentTeaRecordId);
 console.log("수정 데이터:", {
@@ -1317,6 +1569,9 @@ console.log("불러온 데이터:", data);
 
 document.getElementById("amountInput").value =
 data.amount ?? "";
+
+document.getElementById("teaTitle").innerText =
+data.tea_name ?? "이름 없는 차";
 
 document.getElementById("temperatureInput").value =
 data.temperature ?? "";
@@ -1452,7 +1707,7 @@ onclick="zoomImage('${file}')">
 
 <div class="tea-description">
 
-<h3>포담 금훤 우룡</h3>
+<h3 id="teaTitle"></h3>
 
 <textarea id="memoInput" placeholder="차에 대한 기록을 남겨주세요"></textarea>
 
@@ -1464,7 +1719,7 @@ margin-top:20px;
 ">
 
 <button class="save-button" onclick="updateTeaRecord()">
-수정 저장
+수정
 </button>
 
 
@@ -1511,7 +1766,9 @@ document.getElementById("modalContent").innerHTML="";
 
 setTimeout(()=>{
 
-modal.style.display="none";
+    modal.style.display="none";
+
+    moving=false;
 
 },500);
 
@@ -1598,6 +1855,7 @@ img.src = images[currentIndex];
 
 zoom.style.display="block";
 
+zoom.style.pointerEvents="auto";
 
 renderZoomThumbnails();
 
@@ -1731,6 +1989,8 @@ document.getElementById("imageZoom");
 
 zoom.style.display="none";
 
+zoom.style.pointerEvents="none";
+
 
 showImage();
 
@@ -1741,6 +2001,7 @@ showImage();
 
 let page = 0;
 let moving = false;
+let firstTransitionDone = false;
 
 window.addEventListener("load",()=>{
 
@@ -1787,74 +2048,143 @@ window.addEventListener("wheel",(e)=>{
 
 if(moving) return;
 
-moving = true;
 
+const galleryTop =
+document.querySelector(".gallery-wrapper").offsetTop;
+
+
+
+// 아래로 내림
 if(e.deltaY > 0){
 
-page = 1;
 
-document
-.getElementById("hero")
-.classList.add("hide");
-
-document
-.getElementById("gallery")
-.classList.add("show");
-
-document
-.getElementById("movingLine")
-.classList.add("show");
-
-document
-.getElementById("recordButton")
-.classList.add("show");
+    // 첫 화면에서만 앨범 진입
+    if(
+        page === 0 &&
+        window.scrollY < window.innerHeight / 2
+    ){
 
 
-setTimeout(()=>{
-
-document
-.getElementById("movingLine")
-.classList.add("move");
-
-},100);
-
-window.scrollTo({
-
-    top:document.querySelector(".gallery-wrapper").offsetTop,
-
-    behavior:"smooth"
-
-});
-
-}else{
-
-page = 0;
-
-document
-.getElementById("hero")
-.classList.remove("hide");
-
-document
-.getElementById("movingLine")
-.classList.remove("move");
-
-document
-.getElementById("recordButton")
-.classList.remove("show");
+        moving = true;
 
 
-window.scrollTo({
-    top:0,
-    behavior:"smooth"
-});
+        page = 1;
+
+
+        document
+        .getElementById("hero")
+        .classList.add("hide");
+
+
+        document
+        .getElementById("gallery")
+        .classList.add("show");
+
+
+        document
+        .getElementById("movingLine")
+        .classList.add("show");
+
+
+        document
+        .getElementById("recordButton")
+        .classList.add("show");
+
+
+
+        setTimeout(()=>{
+
+            document
+            .getElementById("movingLine")
+            .classList.add("move");
+
+        },100);
+
+
+
+        window.scrollTo({
+
+            top:galleryTop,
+
+            behavior:"smooth"
+
+        });
+
+
+    }
+
 
 }
 
+
+
+
+// 위로 올림
+else if(e.deltaY < 0){
+
+
+
+    // 앨범 시작 위치 근처에서만 메인 복귀
+    if(
+        page === 1 &&
+        window.scrollY <= galleryTop + 50
+    ){
+
+
+
+        moving = true;
+
+
+        page = 0;
+
+
+
+        document
+        .getElementById("hero")
+        .classList.remove("hide");
+
+
+        document
+        .getElementById("gallery")
+        .classList.remove("show");
+
+
+        document
+        .getElementById("movingLine")
+        .classList.remove("move");
+
+
+
+        document
+        .getElementById("recordButton")
+        .classList.remove("show");
+
+
+
+        window.scrollTo({
+
+            top:0,
+
+            behavior:"smooth"
+
+        });
+
+
+    }
+
+
+
+}
+
+
+
 setTimeout(()=>{
 
-moving = false;
+moving=false;
 
-},300);
+},500);
+
+
 
 });
 
@@ -1931,13 +2261,20 @@ window.addEventListener("touchend",(e)=>{
 
 
 
-            window.scrollTo({
+    window.scrollTo({
 
-                top:document.querySelector(".gallery-wrapper").offsetTop,
+        top:galleryTop,
 
-                behavior:"smooth"
-    
-        });
+        behavior:"smooth"
+
+    });
+
+
+    setTimeout(()=>{ 
+
+        moving = false;
+ 
+    },1200);
 
 
 
@@ -2087,12 +2424,32 @@ ${tea.tea_name || "이름 없는 차"}
 
 </h3>
 
+<div style="
+text-align:center;
+position:relative;
+">
 
-<p class="tea-date">
+<p class="tea-date" style="margin:0;">
 
 ${new Date(tea.created_at).toLocaleDateString("ko-KR")}
 
 </p>
+
+
+<button 
+style="
+position:absolute;
+right:0;
+top:-4px;
+padding:4px 10px;
+font-size:13px;
+"
+onclick="deleteCard(event, ${tea.id})"
+>
+🗑
+</button>
+
+</div>
 
 
 `;
@@ -2306,17 +2663,27 @@ function renderEditPhotoPreview(){
             remove.style.display="none";
         };
 
-        remove.onclick = function(e){
-            e.stopPropagation();
+remove.onclick = function(e){
+    e.stopPropagation();
 
-            editSelectedPhotos.splice(index,1);
+  	  // 삭제
+   	 editSelectedPhotos.splice(index,1);
 
-            if(editMainPhotoIndex >= editSelectedPhotos.length){
-                editMainPhotoIndex = 0;
-            }
+  	  // 대표사진 보정
+ 	   if(editMainPhotoIndex === index){
+      	  editMainPhotoIndex = 0;
+ 	   }else if(index < editMainPhotoIndex){
+  	      editMainPhotoIndex--;
+ 	   }
 
-            renderEditPhotoPreview();
-        };
+ 	   // 배열 비었을 때
+ 	   if(editSelectedPhotos.length === 0){
+ 	       editMainPhotoIndex = 0;
+  	  }
+
+ 	   renderEditPhotoPreview();
+	};
+
 
         // ✅ 드래그 시작
         box.addEventListener("dragstart",function(e){
@@ -2599,7 +2966,7 @@ async function saveRecord(){
 
     if(!teaName){
 
-        alert("차 이름을 입력해주세요");
+        showAlert("차 이름을 입력해주세요");
 
         return;
 
@@ -2608,7 +2975,7 @@ async function saveRecord(){
 
     if(selectedPhotos.length === 0){
 
-        alert("사진을 선택해주세요");
+        showAlert("사진을 선택해주세요");
 
         return;
 
@@ -2622,8 +2989,8 @@ const imageUrls = [];
 for(const photo of selectedPhotos){
 
 
-    const fileName =
-    `${Date.now()}_${photo.name}`;
+   const fileName =
+   `${Date.now()}_${photo.name.replace(/[^a-zA-Z0-9.]/g,"")}`;
 
 
 
@@ -2643,7 +3010,7 @@ for(const photo of selectedPhotos){
 
         console.log(uploadError);
 
-        alert("사진 업로드 실패");
+        showAlert("사진 업로드 실패");
 
         return;
 
@@ -2706,7 +3073,7 @@ await supabaseClient
 
         console.log(error);
 
-        alert("저장 실패");
+        showAlert("저장 실패");
 
         return;
 
@@ -2714,13 +3081,16 @@ await supabaseClient
 
 
 
-    alert("기록 완료");
+showAlert("기록 완료");
 
+
+setTimeout(()=>{
 
     closeRecord();
 
-
     location.reload();
+
+},1200);
 
 }
 
@@ -2837,6 +3207,8 @@ renderEditPhotoPreview();
 
 modal.style.display="block";
 
+document.body.style.overflow="hidden";
+
 
 setTimeout(()=>{
 
@@ -2855,13 +3227,21 @@ function closeEdit(){
 const modal =
 document.getElementById("editModal");
 
+
 modal.style.opacity="0";
+
+
+document.body.style.overflow="auto";
+
 
 setTimeout(()=>{
 
-modal.style.display="none";
+    modal.style.display="none";
+
+    document.body.style.pointerEvents="auto";
 
 },500);
+
 
 }
 
@@ -2902,7 +3282,7 @@ if(oldError){
 
 console.log(oldError);
 
-alert("기존 데이터 불러오기 실패");
+showAlert("기존 데이터 불러오기 실패");
 
 return;
 
@@ -2931,7 +3311,7 @@ if(typeof photo === "string"){
 
 // ✅ 새로 추가한 파일만 업로드
 const fileName =
-`${Date.now()}_${photo.name}`;
+`${Date.now()}_${photo.name.replace(/[^a-zA-Z0-9.]/g,"")}`;
 
 const { error:uploadError } =
 
@@ -2947,7 +3327,7 @@ if(uploadError){
 
 console.log(uploadError);
 
-alert("사진 업로드 실패");
+showAlert("사진 업로드 실패");
 
 return;
 
@@ -2997,7 +3377,7 @@ if(error){
 
 console.log(error);
 
-alert("수정 실패");
+showAlert("수정 실패");
 
 return;
 
@@ -3005,13 +3385,16 @@ return;
 
 
 
-alert("수정 완료");
+showAlert("수정 완료");
 
 
-closeEdit();
+setTimeout(()=>{
 
+    closeEdit();
 
-location.reload();
+    location.reload();
+
+},1200);
 
 
 }
@@ -3062,9 +3445,180 @@ async function openPhotoManager(){
 }
 
 let dragFromIndex = null;
+
+let deleteTargetId = null;
+
+
+function deleteCard(event,id){
+
+    event.stopPropagation();
+
+
+    deleteTargetId = id;
+
+
+    const modal =
+    document.getElementById("deleteModal");
+
+
+    modal.style.display="block";
+
+
+    setTimeout(()=>{
+
+        modal.style.opacity="1";
+
+    },10);
+
+}
+
+
+
+function closeDeleteModal(){
+
+    const modal =
+    document.getElementById("deleteModal");
+
+
+    modal.style.opacity="0";
+
+
+    setTimeout(()=>{
+
+        modal.style.display="none";
+
+    },400);
+
+}
+
+
+
+async function confirmDelete(){
+
+
+const { error } =
+await supabaseClient
+.from("tea_records")
+.delete()
+.eq("id",deleteTargetId);
+
+
+
+if(error){
+
+    console.log(error);
+
+    return;
+
+}
+
+
+
+document.getElementById("deleteMessage").innerText =
+"삭제되었습니다.";
+
+
+document.querySelector(".delete-buttons").style.display="none";
+
+
+
+setTimeout(()=>{
+
+    location.reload();
+
+},1200);
+
+
+
+}
+
+function showAlert(message){
+
+    const modal =
+    document.getElementById("alertModal");
+
+    document.getElementById("alertMessage").innerText =
+    message;
+
+
+    modal.style.display="block";
+
+
+    setTimeout(()=>{
+
+        modal.style.opacity="1";
+
+    },10);
+
+}
+
+
+
+function closeAlert(){
+
+    const modal =
+    document.getElementById("alertModal");
+
+
+    modal.style.opacity="0";
+
+
+    setTimeout(()=>{
+
+        modal.style.display="none";
+
+    },400);
+
+}
     
 </script>
 
+
+<div id="deleteModal" class="delete-modal">
+
+
+<div class="delete-box">
+
+
+<h3 id="deleteMessage">
+삭제하시겠습니까?
+</h3>
+
+
+<div class="delete-buttons">
+
+
+<button onclick="confirmDelete()">
+확인
+</button>
+
+
+<button onclick="closeDeleteModal()">
+취소
+</button>
+
+
+</div>
+
+
+</div>
+
+
+</div>
+
+<div id="alertModal" class="alert-modal">
+
+<div class="alert-box">
+
+<h3 id="alertMessage"></h3>
+
+<button onclick="closeAlert()">
+확인
+</button>
+
+</div>
+
+</div>
 
 </body>
 
