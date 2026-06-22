@@ -2753,6 +2753,21 @@ function selectPhotos(event){
 
 }
 
+function selectEditPhotos(event){
+
+    const newPhotos =
+    Array.from(event.target.files);
+
+
+    editSelectedPhotos =
+    editSelectedPhotos.concat(newPhotos);
+
+
+    renderEditPhotoPreview();
+
+
+}
+
 
 
 function renderPhotoPreview(){
