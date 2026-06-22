@@ -1498,6 +1498,7 @@ onclick="updateEditRecord()">
 <footer>
 
 Tea For rest © 2026
+Copyright © 송도울
 
 </footer>
 
@@ -2313,9 +2314,13 @@ else if(e.deltaY < 0){
         .getElementById("recordButton")
         .classList.remove("show");
 
-        document
-        .getElementById("infoButton")
-        .classList.remove("hide");
+   setTimeout(()=>{
+
+         document
+         .getElementById("infoButton")
+         .classList.remove("hide");
+
+     },800);
 
         window.scrollTo({
 
@@ -3821,12 +3826,21 @@ Tea For Rest
 
 <p>
 마신 차를 기록하고<br>
-잠시 쉬어가는 공간입니다.
+좋은 차를 나누기 위해 만든 공간입니다.
 </p>
 
 
 <p>
-차 한 잔의 시간을 남겨보세요.
+나중에 작은 박물관이 될 수 있도록<br>	
+여러분의 차 한 잔을 남겨보세요.
+</p>
+
+<p style="
+font-size:12px;
+margin-top:40px;
+color:#6d6252;
+">
+Copyright © 송도울
 </p>
 
 
