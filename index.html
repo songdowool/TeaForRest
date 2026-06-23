@@ -1058,7 +1058,7 @@ button:hover{
 
     backdrop-filter:blur(3px);
 
-    z-index:60000;
+     z-index:60000;
 
     opacity:0;
 
@@ -1396,6 +1396,10 @@ button:hover{
 
 }
 
+#alertModal{
+    z-index:100000;
+}
+
 </style>
 
 </head>
@@ -1448,6 +1452,64 @@ button:hover{
 
 <div class="gallery-wrapper">
 
+
+<div id="profileHeader" style="
+display:none;
+width:80vw;
+max-width:1200px;
+margin:0 auto;
+padding-top:120px;
+padding-bottom:30px;
+">
+
+<div style="
+display:flex;
+align-items:center;
+gap:15px;
+">
+
+
+<div style="
+width:60px;
+height:60px;
+border-radius:50%;
+border:1px solid #4a3c2b;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:25px;
+">
+🍵
+</div>
+
+
+<div>
+
+<h2 
+id="profilePageNickname"
+style="
+margin:0;
+font-size:24px;
+">
+</h2>
+
+
+<p
+id="profilePageIntro"
+style="
+margin:5px 0;
+color:#9d8a68;
+">
+</p>
+
+
+</div>
+
+
+</div>
+
+
+</div>
 
 <section class="gallery" id="gallery">
 
@@ -1888,6 +1950,9 @@ console.log("수정 후 DB 확인:", checkData);
 
 
 }
+
+
+
     
 let currentIndex = 0;
 
@@ -1897,6 +1962,28 @@ let currentTeaUserId = null;
 
 let currentUser = null;
 
+let currentProfileUserId = null;
+
+function getProfileNicknameFromURL(){
+
+    const path =
+    window.location.pathname;
+
+
+    const parts =
+    path.split("/").filter(Boolean);
+
+
+    if(parts.length < 3){
+
+        return null;
+
+    }
+
+
+    return parts[2];
+
+}
 
 async function loadTeaDetail(){
 
@@ -2732,6 +2819,98 @@ const {
 
 
 let query;
+
+
+const visitNickname =
+getProfileNicknameFromURL();
+console.log("URL 닉네임:", visitNickname);
+
+
+if(visitNickname){
+
+
+    const { data:profile, error } =
+
+    await supabaseClient
+    .from("profiles")
+    .select("*")
+    .eq(
+        "nickname",
+        visitNickname
+    )
+    .single();
+
+    console.log("프로필 결과:", profile);
+    console.log("프로필 에러:", error);
+
+    if(error || !profile){
+
+        showAlert("사용자를 찾을 수 없습니다");
+
+        return;
+
+    }
+
+
+
+    query =
+
+    supabaseClient
+    .from("tea_records")
+    .select("*")
+    .eq(
+        "user_id",
+        profile.id
+    )
+    .order(
+        "created_at",
+        {
+            ascending:false
+        }
+    );
+
+
+}
+
+else if(user){
+
+    currentUser = user;
+
+
+    query =
+
+    supabaseClient
+    .from("tea_records")
+    .select("*")
+    .eq(
+        "user_id",
+        user.id
+    )
+    .order(
+        "created_at",
+        {
+            ascending:false
+        }
+    );
+
+
+}
+
+else{
+
+
+    query =
+
+    supabaseClient
+    .from("tea_records")
+    .select("*")
+    .eq(
+        "is_public",
+        true
+    );
+
+
+}
 
 
 if(user){
@@ -4382,7 +4561,237 @@ modal.style.display="none";
 
 
 }
-   
+
+
+async function openMyTeaProfile(){
+
+
+const {
+    data:{
+        user
+    }
+} = await supabaseClient.auth.getUser();
+
+
+
+if(!user){
+
+    showAlert("로그인이 필요합니다");
+
+    return;
+
+}
+
+
+
+const { data, error } =
+
+await supabaseClient
+.from("profiles")
+.select("*")
+.eq("id", user.id)
+.single();
+
+
+
+if(error){
+
+    console.log(error);
+
+    showAlert("프로필 불러오기 실패");
+
+    return;
+
+}
+
+
+
+document.getElementById("visitNickname").innerText =
+data.nickname;
+
+
+
+document.getElementById("visitIntro").innerText =
+data.intro || "소개가 없습니다";
+
+
+
+const modal =
+document.getElementById("userProfileModal");
+
+
+modal.style.display="block";
+
+
+setTimeout(()=>{
+
+    modal.style.opacity="1";
+
+},10);
+
+
+
+}
+
+
+
+function closeUserProfile(){
+
+
+const modal =
+document.getElementById("userProfileModal");
+
+
+modal.style.opacity="0";
+
+
+setTimeout(()=>{
+
+    modal.style.display="none";
+
+},400);
+
+
+}
+async function openMyTeaGallery(userId){
+
+if(!userId){
+
+    showAlert("사용자를 찾을 수 없습니다");
+
+    return;
+
+}
+
+
+const { data, error } =
+
+await supabaseClient
+.from("profiles")
+.select("*")
+.eq("id", userId)
+.single();
+
+
+if(error){
+
+    console.log(error);
+
+    return;
+
+}
+
+
+// 임시: 내 기록카드 페이지 이동
+loadUserTeaGallery(user.id, data.nickname);
+
+
+}
+
+async function loadUserTeaGallery(userId, nickname){
+
+document.getElementById("profileHeader").style.display="block";
+
+
+document.getElementById("profilePageNickname").innerText =
+nickname;
+
+
+document.getElementById("profilePageIntro").innerText =
+"";
+
+
+const gallery =
+document.getElementById("gallery");
+
+
+gallery.innerHTML="";
+
+
+const { data:records, error } =
+
+await supabaseClient
+.from("tea_records")
+.select("*")
+.eq("user_id", userId)
+.order("created_at",{ascending:false});
+
+
+if(error){
+
+console.log(error);
+
+return;
+
+}
+
+
+records.forEach((tea)=>{
+
+const card =
+document.createElement("div");
+
+
+card.className="card";
+
+
+card.dataset.id = tea.id;
+card.dataset.userId = tea.user_id;
+card.dataset.images =
+JSON.stringify(tea.images || [tea.image_url]);
+
+
+card.innerHTML = `
+
+<img src="${tea.image_url}">
+
+<h3>${tea.tea_name}</h3>
+
+<p class="tea-date">
+${new Date(tea.created_at).toLocaleDateString("ko-KR")}
+</p>
+
+`;
+
+
+card.onclick=function(){
+
+openGalleryFromCard(this);
+
+};
+
+
+gallery.appendChild(card);
+
+
+});
+
+
+window.scrollTo({
+
+top:document.querySelector(".gallery-wrapper").offsetTop,
+
+behavior:"smooth"
+
+});
+
+
+}
+
+
+function goUserPage(){
+
+    const nickname =
+    document.getElementById("profileNickname")
+    .innerText
+    .replace("닉네임 : ","");
+
+
+    location.href =
+    "?user=" + nickname;
+
+}
+
 </script>
 
 
@@ -4495,8 +4904,27 @@ Copyright © 송도울
 
 <div class="alert-box">
 
-<h3>
+<h3 style="
+position:relative;
+text-align:center;
+">
+
 내 프로필
+
+<span 
+onclick="goUserPage()"
+style="
+position:absolute;
+right:37px;
+top:50%;
+transform:translateY(-50%);
+cursor:pointer;
+font-size:22px;
+"
+>
+🍵
+</span>
+
 </h3>
 
 
@@ -4518,6 +4946,50 @@ Copyright © 송도울
 
 
 </div>
+
+</div>
+
+
+<div id="userProfileModal" class="alert-modal">
+
+
+<div class="alert-box" style="width:90%; max-width:1200px;">
+
+
+<h3 id="visitNickname">
+</h3>
+
+
+<p id="visitIntro">
+</p>
+
+
+
+<section 
+id="visitGallery"
+class="gallery"
+style="
+opacity:1;
+transform:none;
+width:80vw;
+max-width:1200px;
+padding:30px 0;
+min-height:auto;
+">
+
+
+</section>
+
+
+<button onclick="closeUserProfile()">
+
+닫기
+
+</button>
+
+
+</div>
+
 
 </div>
 
