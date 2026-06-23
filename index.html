@@ -1966,22 +1966,13 @@ let currentProfileUserId = null;
 
 function getProfileNicknameFromURL(){
 
-    const path =
-    window.location.pathname;
+    const params =
+    new URLSearchParams(
+        window.location.search
+    );
 
 
-    const parts =
-    path.split("/").filter(Boolean);
-
-
-    if(parts.length < 3){
-
-        return null;
-
-    }
-
-
-    return parts[2];
+    return params.get("user");
 
 }
 
