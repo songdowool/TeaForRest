@@ -3286,6 +3286,21 @@ box.addEventListener("dragend",function(){
 
 async function saveRecord(){
 
+	const {
+	    data:{
+	        user
+	    }
+	} = await supabaseClient.auth.getUser();
+
+
+	if(!user){
+
+    	showAlert("로그인 후 이용해주세요");
+
+  	  return;
+
+}
+
     const teaName =
     document.getElementById("teaNameInput").value;
 
@@ -3399,6 +3414,8 @@ await supabaseClient
     images:imageUrls,
 
     created_at:date,
+
+    user_id:user.id,
 
     amount:"",
     temperature:"",
