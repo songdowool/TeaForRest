@@ -2863,6 +2863,32 @@ if(visitNickname){
 
 }
 
+function goUserProfile(userId){
+
+supabaseClient
+.from("profiles")
+.select("nickname")
+.eq("id", userId)
+.single()
+.then(({data,error})=>{
+
+if(error || !data){
+
+showAlert("프로필을 찾을 수 없습니다");
+
+return;
+
+}
+
+
+location.href =
+`?user=${data.nickname}`;
+
+
+});
+
+}
+	
 else if(user){
 
     currentUser = user;
@@ -3067,6 +3093,20 @@ onclick="deleteCard(event, ${tea.id}); event.stopPropagation();"
 :
 ""
 }
+
+
+<button
+style="
+position:absolute;
+left:0;
+top:-4px;
+padding:4px 10px;
+font-size:13px;
+"
+onclick="goUserProfile('${tea.user_id}'); event.stopPropagation();"
+>
+🍵
+</button>
 
 </div>
 
