@@ -1696,6 +1696,8 @@ function openGalleryFromCard(card){
 
     console.log("현재 저장 ID:", currentTeaRecordId);
 
+    currentTeaUserId = card.dataset.userId;
+
     openGallery();
 
 }
@@ -1888,7 +1890,12 @@ console.log("수정 후 DB 확인:", checkData);
 }
     
 let currentIndex = 0;
+
 let currentTeaRecordId = null;
+
+let currentTeaUserId = null;
+
+let currentUser = null;
 
 
 async function loadTeaDetail(){
@@ -2066,6 +2073,12 @@ gap:10px;
 margin-top:20px;
 ">
 
+${
+currentUser &&
+currentUser.id === currentTeaUserId
+?
+`
+
 <button class="save-button" onclick="updateTeaRecord()">
 수정
 </button>
@@ -2076,6 +2089,11 @@ margin-top:20px;
 대표/사진 변경 및 추가
 
 </button>
+
+`
+:
+""
+}
 
 </div>
 
@@ -2718,6 +2736,8 @@ let query;
 
 if(user){
 
+currentUser = user;
+
     // 로그인 상태 → 내 기록만
     query =
     supabaseClient
@@ -2804,6 +2824,7 @@ card.innerHTML = `
 
 <div class="preview-box"
 data-id="${tea.id}"
+data-user-id="${tea.user_id}"
 data-images='${JSON.stringify(cardImages)}'>
 
 
