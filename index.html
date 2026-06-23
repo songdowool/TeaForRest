@@ -1308,12 +1308,117 @@ button:hover{
 
 }
 
+/* 왼쪽 메뉴 */
+
+.side-menu-button{
+
+    position:fixed;
+
+    top:30px;
+
+    left:30px;
+
+    font-size:32px;
+
+    color:#d6c6a5;
+
+    cursor:pointer;
+
+    z-index:70000;
+
+}
+
+
+.side-menu{
+
+    position:fixed;
+
+    left:-230px;
+
+    top:0;
+
+    width:230px;
+
+    height:100%;
+
+    background:#211b17;
+
+    border-right:1px solid #4a3c2b;
+
+    z-index:60000;
+
+    transition:left 0.4s ease;
+
+    padding-top:90px;
+
+}
+
+.side-menu:hover,
+.side-menu-button:hover + .side-menu{
+
+
+    left:0;
+
+
+}
+
+
+.side-menu button{
+
+    display:block;
+
+    width:160px;
+
+    margin:20px auto;
+
+    padding:12px;
+
+}
+
+
+@media(max-width:768px){
+
+.side-menu-button{
+
+    left:20px;
+
+    top:20px;
+
+}
+
+
+.side-menu{
+
+    left:-230px;
+
+}
+
+
+}
+
 </style>
 
 </head>
 
 
 <body>
+
+<div class="side-menu-button">
+☰
+</div>
+
+
+<div class="side-menu">
+
+<button onclick="openAuth('login')">
+로그인
+</button>
+
+<button onclick="openAuth('signup')">
+회원가입
+</button>
+
+</div>
 
 <header id="hero">
 
@@ -1596,6 +1701,36 @@ const supabaseClient = supabase.createClient(
     supabaseKey
 );
 
+async function signUpUser(email,password){
+
+const { data,error } =
+
+await supabaseClient.auth.signUp({
+
+    email:email,
+
+    password:password
+
+});
+
+
+if(error){
+
+    console.log(error);
+
+    showAlert(error.message);
+
+    return;
+
+}
+
+
+console.log("회원가입 결과:", data);
+
+
+showAlert("회원가입 완료");
+
+}
 
 let images = [];
 
@@ -2780,6 +2915,21 @@ let editMainPhotoIndex = 0;
 
 function renderEditPhotoPreview(){
 
+function selectEditPhotos(event){
+
+    const newPhotos =
+    Array.from(event.target.files);
+
+    editSelectedPhotos = [
+        ...editSelectedPhotos,
+        ...newPhotos
+    ];
+
+    renderEditPhotoPreview();
+
+    event.target.value = "";
+}
+
     const preview =
     document.getElementById("editPhotoPreview");
 
@@ -2934,6 +3084,17 @@ function selectPhotos(event){
 
 }
 
+function selectEditPhotos(event){
+
+    const newPhotos =
+    Array.from(event.target.files);
+
+    editSelectedPhotos.push(...newPhotos);
+
+    renderEditPhotoPreview();
+
+    event.target.value = "";
+}
 
 
 function renderPhotoPreview(){
@@ -3742,6 +3903,141 @@ function closeAlert(){
 
 }
 
+let authMode = "login";
+
+
+function openAuth(mode){
+
+    authMode = mode;
+
+
+    document.getElementById("authTitle").innerText =
+    mode === "login"
+    ?
+    "로그인"
+    :
+    "회원가입";
+
+
+    document.getElementById("authModal").style.display="block";
+
+
+    setTimeout(()=>{
+
+        document.getElementById("authModal").style.opacity="1";
+
+    },10);
+
+}
+
+
+
+function closeAuth(){
+
+    const modal =
+    document.getElementById("authModal");
+
+
+    modal.style.opacity="0";
+
+
+    setTimeout(()=>{
+
+        modal.style.display="none";
+
+    },400);
+
+}
+
+
+let authSending = false;
+
+
+async function submitAuth(){
+
+if(authSending){
+    return;
+}
+
+authSending = true;
+
+
+const email =
+document.getElementById("authEmail").value;
+
+
+const password =
+document.getElementById("authPassword").value;
+
+
+
+if(!email || !password){
+
+    showAlert("이메일과 비밀번호를 입력해주세요");
+
+    authSending = false;
+
+    return;
+
+}
+
+
+
+if(authMode === "signup"){
+
+
+    if(!email.includes("@")){
+
+        showAlert("올바른 이메일을 입력해주세요");
+
+        authSending = false;
+
+        return;
+
+    }
+
+
+    await signUpUser(email,password);
+
+
+}else{
+
+
+    const {data,error} =
+
+    await supabaseClient.auth.signInWithPassword({
+
+        email:email,
+
+        password:password
+
+    });
+
+
+    if(error){
+
+        showAlert(error.message);
+
+        authSending = false;
+
+        return;
+
+    }
+
+
+    showAlert("로그인 완료");
+
+}
+
+
+closeAuth();
+
+
+authSending = false;
+
+
+}
+
 function openLetter(){
 
 const modal =
@@ -3885,6 +4181,51 @@ Copyright © 송도울
 
 </div>
 
+
+</div>
+
+<div id="authModal" class="alert-modal">
+
+<div class="alert-box">
+
+<h3 id="authTitle">
+로그인
+</h3>
+
+
+<input 
+id="authEmail"
+type="text"
+placeholder="이메일"
+style="
+width:100%;
+box-sizing:border-box;
+margin:10px 0;
+">
+
+
+<input 
+id="authPassword"
+type="password"
+placeholder="비밀번호"
+style="
+width:100%;
+box-sizing:border-box;
+margin:10px 0;
+">
+
+
+<button onclick="submitAuth()">
+확인
+</button>
+
+
+<button onclick="closeAuth()">
+취소
+</button>
+
+
+</div>
 
 </div>
 
