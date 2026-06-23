@@ -1410,12 +1410,20 @@ button:hover{
 
 <div class="side-menu">
 
-<button onclick="openAuth('login')">
+<button id="loginButton" onclick="openAuth('login')">
 로그인
 </button>
 
-<button onclick="openAuth('signup')">
+<button id="signupButton" onclick="openAuth('signup')">
 회원가입
+</button>
+
+<button id="profileButton" style="display:none;" onclick="openProfile()">
+내 프로필
+</button>
+
+<button id="logoutButton" style="display:none;" onclick="logoutUser()">
+로그아웃
 </button>
 
 </div>
@@ -1726,6 +1734,47 @@ if(error){
 
 
 console.log("회원가입 결과:", data);
+
+
+// 회원가입한 사용자 정보
+const user = data.user;
+
+
+if(user){
+
+
+// profiles 자동 생성
+
+const { error:profileError } =
+
+await supabaseClient
+.from("profiles")
+.insert({
+
+    id:user.id,
+
+    nickname: email.split("@")[0],
+
+    intro:""
+
+});
+
+
+if(profileError){
+
+    console.log("프로필 생성 실패:", profileError);
+
+    showAlert("회원가입은 됐지만 프로필 생성 실패");
+
+    return;
+
+}
+
+
+console.log("프로필 생성 완료");
+
+
+}
 
 
 showAlert("회원가입 완료");
@@ -2381,9 +2430,17 @@ if(e.deltaY > 0){
         .classList.add("show");
 
 
-        document
-        .getElementById("recordButton")
-        .classList.add("show");
+        supabaseClient.auth.getUser().then(({data:{user}})=>{
+
+            if(user){
+
+                document
+                .getElementById("recordButton")
+                .classList.add("show");
+
+            }
+
+        });
 
         document
         .getElementById("infoButton")
@@ -2549,10 +2606,17 @@ window.addEventListener("touchend",(e)=>{
         .classList.add("show");
 
 
-        document
-        .getElementById("recordButton")
-        .classList.add("show");
+        supabaseClient.auth.getUser().then(({data:{user}})=>{
 
+            if(user){
+
+                document
+                .getElementById("recordButton")
+                .classList.add("show");
+
+            }
+
+        });
 
 
         setTimeout(()=>{
@@ -2642,17 +2706,61 @@ window.addEventListener("touchend",(e)=>{
 
 async function loadTeaRecords(){
 
+const {
+    data:{
+        user
+    }
+} = await supabaseClient.auth.getUser();
+
+
+let query;
+
+
+if(user){
+
+    // 로그인 상태 → 내 기록만
+    query =
+    supabaseClient
+    .from("tea_records")
+    .select("*")
+    .eq(
+        "user_id",
+        user.id
+    )
+    .order("created_at",{ascending:false});
+
+
+}else{
+
+    // 비로그인 상태 → 공개 기록
+    query =
+    supabaseClient
+    .from("tea_records")
+    .select("*")
+    .eq(
+        "is_public",
+        true
+    );
+
+}
+
+
 const { data, error } =
-await supabaseClient
-.from("tea_records")
-.select("*")
-.order("created_at",{ascending:false});
+await query;
 
 
 if(error){
 
 console.log(error);
 return;
+
+}
+
+if(!user && data){
+
+    data.sort(()=>Math.random()-0.5);
+
+    data.splice(6);
 
 }
 
@@ -2747,6 +2855,10 @@ ${new Date(tea.created_at).toLocaleDateString("ko-KR")}
 </p>
 
 
+${
+user && tea.user_id === user.id
+?
+`
 <button 
 style="
 position:absolute;
@@ -2759,6 +2871,10 @@ onclick="deleteCard(event, ${tea.id}); event.stopPropagation();"
 >
 🗑
 </button>
+`
+:
+""
+}
 
 </div>
 
@@ -3486,6 +3602,8 @@ for(let i=1;i<=31;i++){
 
 loadTeaRecords();
 
+checkLogin();
+
 });
 
 
@@ -4042,7 +4160,19 @@ if(authMode === "signup"){
     }
 
 
-    showAlert("로그인 완료");
+showAlert("로그인 완료");
+
+
+setTimeout(()=>{
+
+    history.scrollRestoration = "manual";
+
+    window.scrollTo(0,0);
+
+    location.reload();
+
+},1200);
+
 
 }
 
@@ -4093,7 +4223,145 @@ modal.style.display="none";
 
 }
 
-    
+
+async function checkLogin(){
+
+const {
+    data:{
+        user
+    }
+} = await supabaseClient.auth.getUser();
+
+
+if(user){
+
+    document.getElementById("loginButton").style.display="none";
+
+    document.getElementById("signupButton").style.display="none";
+
+    document.getElementById("profileButton").style.display="block";
+
+    document.getElementById("logoutButton").style.display="block";
+
+
+}else{
+
+
+    document.getElementById("loginButton").style.display="block";
+
+    document.getElementById("signupButton").style.display="block";
+
+    document.getElementById("profileButton").style.display="none";
+
+    document.getElementById("logoutButton").style.display="none";
+
+}
+
+}
+
+
+
+async function logoutUser(){
+
+await supabaseClient.auth.signOut();
+
+location.reload();
+
+}
+
+async function openProfile(){
+
+
+const {
+    data:{
+        user
+    }
+} = await supabaseClient.auth.getUser();
+
+
+if(!user){
+
+    showAlert("로그인이 필요합니다");
+
+    return;
+
+}
+
+
+
+const { data, error } =
+
+await supabaseClient
+.from("profiles")
+.select("*")
+.eq("id", user.id)
+.single();
+
+
+
+if(error){
+
+    console.log(error);
+
+    showAlert("프로필 불러오기 실패");
+
+    return;
+
+}
+
+
+
+document.getElementById("profileNickname").innerText =
+"닉네임 : " + data.nickname;
+
+
+
+document.getElementById("profileIntro").innerText =
+"소개 : " + (data.intro || "소개가 없습니다");
+
+
+
+document.getElementById("profileDate").innerText =
+"가입일 : " + new Date(data.created_at).toLocaleDateString("ko-KR");
+
+
+
+const modal =
+document.getElementById("profileModal");
+
+
+modal.style.display="block";
+
+
+setTimeout(()=>{
+
+modal.style.opacity="1";
+
+},10);
+
+
+}
+
+
+
+function closeProfile(){
+
+const modal =
+document.getElementById("profileModal");
+
+
+modal.style.opacity="0";
+
+
+setTimeout(()=>{
+
+modal.style.display="none";
+
+},400);
+
+
+}
+   
 </script>
 
 
@@ -4201,6 +4469,37 @@ Copyright © 송도울
 
 </div>
 
+
+<div id="profileModal" class="alert-modal">
+
+<div class="alert-box">
+
+<h3>
+내 프로필
+</h3>
+
+
+<p id="profileNickname">
+</p>
+
+
+<p id="profileIntro">
+</p>
+
+
+<p id="profileDate">
+</p>
+
+
+<button onclick="closeProfile()">
+닫기
+</button>
+
+
+</div>
+
+</div>
+
 <div id="authModal" class="alert-modal">
 
 <div class="alert-box">
@@ -4245,6 +4544,8 @@ margin:10px 0;
 </div>
 
 </div>
+
+
 
 </body>
 
