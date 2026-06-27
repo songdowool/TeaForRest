@@ -1648,7 +1648,11 @@ line-height:1.8;
 <button
 id="editProfileButton"
 onclick="openProfileEdit()"
-style="margin-top:25px;">
+style="
+margin-top:15px;
+position:relative;
+top:-17px;
+">
 프로필 변경
 </button>
 
@@ -1723,6 +1727,21 @@ color:#9d8a68;
 
 
 <div class="gallery-wrapper">
+
+<div id="randomGuide" style="
+display:none;
+text-align:center;
+margin-top:80px;
+margin-bottom:-40px;
+color:#9d8a68;
+font-size:16px;
+line-height:1.8;
+letter-spacing:1px;
+">
+<br>이곳에서는 모든 사람들이 올린 차 기록을
+랜덤으로 둘러볼 수 있습니다.<br>
+사진을 클릭해 🍵 눌러 다른 사람의 기록을 구경해보세요!
+</div>
 
 <div class="random-gallery-area">
 
@@ -3190,6 +3209,8 @@ if(!user && !visitNickname && data){
 
     document.body.classList.add("random-mode");
 
+    document.getElementById("randomGuide").style.display = "block";
+
     allRandomTeaRecords = [...data];
 
     showRandomCards();
@@ -3399,20 +3420,18 @@ if(dots[newIndex]){
 
 previewBox.addEventListener("mouseleave",()=>{
 
-```
-previewIndex = 0;
+    previewIndex = 0;
 
-// 👉 대표사진으로 복귀
-previewImage.src = cardImages[0];
+    // 👉 대표사진으로 복귀
+    previewImage.src = cardImages[0];
 
-dots.forEach(dot=>{
-    dot.classList.remove("active");
-});
+    dots.forEach(dot=>{
+        dot.classList.remove("active");
+    });
 
-if(dots[0]){
-    dots[0].classList.add("active");
-}
-```
+    if(dots[0]){
+        dots[0].classList.add("active");
+    }
 
 });
 
@@ -3681,18 +3700,16 @@ ${new Date(tea.created_at).toLocaleDateString("ko-KR")}
 
 function openRecord(){
 
-```
-const modal =
-document.getElementById("recordModal");
+    const modal =
+    document.getElementById("recordModal");
 
-modal.style.display="block";
+    modal.style.display="block";
 
-setTimeout(()=>{
+    setTimeout(()=>{
 
-    modal.style.opacity="1";
+        modal.style.opacity="1";
 
-},10);
-```
+    },10);
 
 }
 
@@ -5280,7 +5297,15 @@ if(error){
 
     console.log(error);
 
-    showAlert("프로필 저장 실패");
+    if(error.code === "23505"){
+
+        showAlert("중복되는 닉네임입니다");
+
+    }else{
+
+        showAlert("프로필 저장 실패");
+
+    }
 
     return;
 
