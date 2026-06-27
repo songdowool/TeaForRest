@@ -108,14 +108,14 @@ h1{
 
 .gallery{
 
-    width:80vw;
+    width:1200px;
     max-width:1200px;
 
     padding:3vh 3vw 5vh;
-    margin:auto;
+    margin:0 auto;
 
     /* 두 번째 페이지 사진 위치 */
-    padding-top:150px;
+    padding-top:100px;
     padding-right:50px;
     padding-bottom:150px;
     padding-left:50px;
@@ -396,7 +396,7 @@ footer{
 .preview-box{
     position:relative;
     cursor:pointer;
-}}
+}
 
 
 .preview-box img{
@@ -1037,7 +1037,6 @@ button:hover{
 
 
     box-shadow:
-오후 5:13 2026-06-22
     0 15px 35px rgba(0,0,0,0.45);
 
 }
@@ -1400,6 +1399,146 @@ button:hover{
     z-index:100000;
 }
 
+
+.random-gallery-area{
+    position:relative;
+}
+
+.random-arrow{
+    position:absolute;
+    top:40%;
+    transform:translateY(-50%);
+
+    width:80px;
+    height:100px;
+
+    background:transparent;
+    border:none;
+
+    color:#d6c6a5;
+    font-size:70px;
+    line-height:1;
+
+    cursor:pointer;
+    z-index:20;
+
+    opacity:0.75;
+
+    padding:0;
+}
+
+.random-arrow:hover{
+    opacity:1;
+    background:transparent;
+}
+
+.random-left{
+    left:-110px;
+}
+
+.random-right{
+    right:-170px;
+}
+
+
+.card{
+    height:380px;
+    box-sizing:border-box;
+}
+
+.preview-box{
+    height:250px;
+    overflow:hidden;
+}
+
+.preview-box img,
+.previewImage{
+    width:100%;
+    height:250px;
+    object-fit:cover;
+    display:block;
+}
+
+.card h3{
+    height:50px;
+    line-height:1.4;
+    overflow:hidden;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.tea-date{
+    height:22px;
+    line-height:22px;
+}
+
+
+.gallery.out-left{
+    animation:outLeft 0.38s ease forwards;
+}
+
+.gallery.out-right{
+    animation:outRight 0.38s ease forwards;
+}
+
+.gallery.in-right{
+    animation:inRight 0.13s ease-out forwards;
+}
+
+.gallery.in-left{
+    animation:inLeft 0.13s ease-out forwards;
+}
+
+@keyframes outLeft{
+    0%{
+        transform:translateX(0);
+    }
+
+    100%{
+        transform:translateX(-120%);
+    }
+}
+
+@keyframes outRight{
+    0%{
+        transform:translateX(0);
+    }
+
+    100%{
+        transform:translateX(120%);
+    }
+}
+
+@keyframes inRight{
+    0%{
+        transform:translateX(120%);
+    }
+
+    100%{
+        transform:translateX(0);
+    }
+}
+
+@keyframes inLeft{
+    0%{
+        transform:translateX(-120%);
+    }
+
+    100%{
+        transform:translateX(0);
+    }
+}
+
+.random-gallery-area{
+    position:relative;
+    overflow:visible;
+}
+
+.gallery{
+    will-change:transform;
+}
 </style>
 
 </head>
@@ -1434,11 +1573,83 @@ button:hover{
 
 <header id="hero">
 
+<div id="guestHero">
+
 <h1>Tea For Rest</h1>
 
 <p class="subtitle">
 마신 차를 기록하세요.
 </p>
+
+</div>
+
+
+<div
+id="profileHero"
+style="
+display:none;
+width:700px;
+max-width:90%;
+">
+
+<div style="
+display:flex;
+align-items:flex-start;
+gap:20px;
+text-align:left;
+">
+
+<div style="
+width:80px;
+height:80px;
+border-radius:50%;
+border:1px solid #4a3c2b;
+display:flex;
+justify-content:center;
+align-items:center;
+font-size:34px;
+flex-shrink:0;
+">
+🍵
+</div>
+
+<div style="
+flex:1;
+">
+
+<h2
+id="heroNickname"
+style="
+margin:0;
+font-size:34px;
+letter-spacing:2px;
+">
+내 프로필
+</h2>
+
+<p
+id="heroIntro"
+style="
+margin-top:12px;
+color:#9d8a68;
+line-height:1.8;
+">
+소개가 없습니다.
+</p>
+
+<button
+id="editProfileButton"
+onclick="openProfileEdit()"
+style="margin-top:25px;">
+프로필 변경
+</button>
+
+</div>
+
+</div>
+
+</div>
+
 
 <div class="hero-line" id="movingLine"></div>
 
@@ -1447,10 +1658,6 @@ button:hover{
 </div>
 
 </header>
-
-
-
-<div class="gallery-wrapper">
 
 
 <div id="profileHeader" style="
@@ -1466,8 +1673,8 @@ padding-bottom:30px;
 display:flex;
 align-items:center;
 gap:15px;
+transform:translateY(150px);
 ">
-
 
 <div style="
 width:60px;
@@ -1482,17 +1689,15 @@ font-size:25px;
 🍵
 </div>
 
-
 <div>
 
-<h2 
+<h2
 id="profilePageNickname"
 style="
 margin:0;
 font-size:24px;
 ">
 </h2>
-
 
 <p
 id="profilePageIntro"
@@ -1502,18 +1707,30 @@ color:#9d8a68;
 ">
 </p>
 
+</div>
+
+</div>
 
 </div>
 
 
-</div>
+<div class="gallery-wrapper">
 
+<div class="random-gallery-area">
 
-</div>
+<button class="random-arrow random-left" onclick="showRandomCards('left')">
+❮
+</button>
 
 <section class="gallery" id="gallery">
 
 </section>
+
+<button class="random-arrow random-right" onclick="showRandomCards('right')">
+❯
+</button>
+
+</div>
 
 
 </div>
@@ -1522,7 +1739,7 @@ color:#9d8a68;
 <button 
 id="infoButton"
 class="info-button"
-onclick="openLetter()">
+onclick="handleInfoButton()">
 
 ?
 
@@ -1758,9 +1975,14 @@ function openGalleryFromCard(card){
 
     console.log("현재 저장 ID:", currentTeaRecordId);
 
-    currentTeaUserId = card.dataset.userId;
+currentTeaUserId = card.dataset.userId;
+
+
+loadTeaUserNickname().then(()=>{
 
     openGallery();
+
+});
 
 }
 
@@ -1960,6 +2182,8 @@ let currentTeaRecordId = null;
 
 let currentTeaUserId = null;
 
+let currentTeaUserNickname = "";
+
 let currentUser = null;
 
 let currentProfileUserId = null;
@@ -2116,6 +2340,21 @@ onclick="zoomImage('${file}')">
 
 
 <div class="tea-info">
+
+
+<div
+style="
+text-align:center;
+margin-bottom:15px;
+cursor:pointer;
+"
+onclick="goTeaUserPage()"
+>
+
+${currentTeaUserNickname} 님의 기록 🍵
+
+</div>
+
 
 <p>
 용량 :
@@ -2445,42 +2684,37 @@ let firstTransitionDone = false;
 
 window.addEventListener("load",()=>{
 
+    if("scrollRestoration" in history){
+        history.scrollRestoration = "manual";
+    }
 
-setTimeout(()=>{
+    window.scrollTo(0,0);
 
+    page = 0;
 
-document
-.getElementById("movingLine")
-.classList.add("show");
+    document
+    .getElementById("hero")
+    .classList.remove("hide");
 
+    document
+    .getElementById("gallery")
+    .classList.remove("show");
 
+    document
+    .getElementById("movingLine")
+    .classList.remove("move");
 
-/*
-첫 번째 페이지 새로고침:
-그대로 유지
+    document
+    .getElementById("movingLine")
+    .classList.add("show");
 
-두 번째 페이지 새로고침:
-앨범만 다시 페이드
-*/
+    document
+    .getElementById("recordButton")
+    .classList.remove("show");
 
-if(window.scrollY >= window.innerHeight){
-
-
-document
-.getElementById("hero")
-.classList.add("hide");
-
-
-document
-.getElementById("gallery")
-.classList.add("show");
-
-
-}
-
-
-},300);
-
+    document
+    .getElementById("infoButton")
+    .classList.remove("hide");
 
 });
 
@@ -2663,6 +2897,9 @@ window.addEventListener("touchend",(e)=>{
 
     if(moving) return;
 
+    const galleryTop =
+    document.querySelector(".gallery-wrapper").offsetTop;
+
 
     let touchEndY = e.changedTouches[0].clientY;
 
@@ -2735,13 +2972,6 @@ window.addEventListener("touchend",(e)=>{
 
     });
 
-	setTimeout(()=>{
-
-	modal.style.display="none";
-
-	},500);
-
-
     setTimeout(()=>{ 
 
         moving = false;
@@ -2799,6 +3029,11 @@ window.addEventListener("touchend",(e)=>{
 
   
 
+let allRandomTeaRecords = [];
+let randomCardMoving = false;
+
+let randomCardPages = [];
+let randomCardPageIndex = -1;
 
 async function loadTeaRecords(){
 
@@ -2842,6 +3077,31 @@ if(visitNickname){
 
     }
 
+
+    currentProfileUserId = profile.id;
+
+    document.getElementById("guestHero").style.display = "none";
+    document.getElementById("profileHero").style.display = "block";
+
+    document.getElementById("heroNickname").innerText =
+    profile.nickname + "님의 프로필";
+
+    document.getElementById("heroIntro").innerText =
+    profile.intro || "소개가 없습니다.";
+
+	
+
+    document.getElementById("editProfileButton").style.display = "none";
+
+    document.getElementById("profileHeader").style.display = "block";
+
+    document.getElementById("profilePageNickname").innerText =
+    profile.nickname;
+
+    document.getElementById("profilePageIntro").innerText =
+    profile.intro || "소개가 없습니다.";
+
+    document.getElementById("infoButton").innerText = "←";
 
 
     query =
@@ -2904,37 +3164,6 @@ else{
 }
 
 
-if(user){
-
-currentUser = user;
-
-    // 로그인 상태 → 내 기록만
-    query =
-    supabaseClient
-    .from("tea_records")
-    .select("*")
-    .eq(
-        "user_id",
-        user.id
-    )
-    .order("created_at",{ascending:false});
-
-
-}else{
-
-    // 비로그인 상태 → 공개 기록
-    query =
-    supabaseClient
-    .from("tea_records")
-    .select("*")
-    .eq(
-        "is_public",
-        true
-    );
-
-}
-
-
 const { data, error } =
 await query;
 
@@ -2949,9 +3178,11 @@ return;
 
 if(!user && data){
 
-    data.sort(()=>Math.random()-0.5);
+    allRandomTeaRecords = [...data];
 
-    data.splice(6);
+    showRandomCards();
+
+    return;
 
 }
 
@@ -3156,42 +3387,303 @@ if(dots[newIndex]){
 
 previewBox.addEventListener("mouseleave",()=>{
 
-    previewIndex = 0;
+```
+previewIndex = 0;
 
-    // 👉 대표사진으로 복귀
-    previewImage.src = cardImages[0];
+// 👉 대표사진으로 복귀
+previewImage.src = cardImages[0];
 
-    dots.forEach(dot=>{
-        dot.classList.remove("active");
-    });
+dots.forEach(dot=>{
+    dot.classList.remove("active");
+});
 
-    if(dots[0]){
-        dots[0].classList.add("active");
+if(dots[0]){
+    dots[0].classList.add("active");
+}
+```
+
+});
+
+});
+
+}
+
+async function showRandomCards(direction = "right"){
+
+    if(randomCardMoving){
+        return;
     }
 
-});
+    randomCardMoving = true;
 
+    const gallery =
+    document.getElementById("gallery");
 
+    gallery.classList.remove(
+        "out-left",
+        "out-right",
+        "in-left",
+        "in-right"
+    );
 
-});
+    if(gallery.children.length > 0){
 
+        if(direction === "right"){
+            gallery.classList.add("out-left");
+        }else{
+            gallery.classList.add("out-right");
+        }
+
+        await new Promise(resolve=>{
+            setTimeout(resolve,380);
+        });
+
+    }
+
+gallery.innerHTML = "";
+
+let randomData;
+
+if(randomCardPageIndex === -1){
+
+    randomData =
+    [...allRandomTeaRecords]
+    .sort(()=>Math.random()-0.5)
+    .slice(0,6);
+
+    randomCardPages.push(randomData);
+    randomCardPageIndex = 0;
+
+}else if(direction === "right"){
+
+    if(randomCardPageIndex < randomCardPages.length - 1){
+
+        randomCardPageIndex++;
+        randomData = randomCardPages[randomCardPageIndex];
+
+    }else{
+
+        randomData =
+        [...allRandomTeaRecords]
+        .sort(()=>Math.random()-0.5)
+        .slice(0,6);
+
+        randomCardPages.push(randomData);
+        randomCardPageIndex++;
+
+    }
+
+}else if(direction === "left"){
+
+    if(randomCardPageIndex > 0){
+
+        randomCardPageIndex--;
+        randomData = randomCardPages[randomCardPageIndex];
+
+    }else{
+
+        randomData =
+        [...allRandomTeaRecords]
+        .sort(()=>Math.random()-0.5)
+        .slice(0,6);
+
+        randomCardPages.unshift(randomData);
+
+        randomCardPageIndex = 0;
+
+    }
+
+}
+
+randomData.forEach((tea)=>{
+
+        const card =
+        document.createElement("div");
+
+        card.className="card";
+
+        let cardImages =
+        tea.images && tea.images.length > 0
+        ?
+        [...tea.images]
+        :
+        [
+        tea.image_url
+        ];
+
+        const mainImage = tea.image_url;
+
+        const mainIndex = cardImages.indexOf(mainImage);
+
+        if(mainIndex > -1){
+            cardImages.splice(mainIndex, 1);
+        }
+
+        cardImages.unshift(mainImage);
+
+        card.innerHTML = `
+
+<div class="preview-box"
+data-id="${tea.id}"
+data-user-id="${tea.user_id}"
+data-images='${JSON.stringify(cardImages)}'>
+
+<img
+class="previewImage"
+src="${tea.image_url || "https://via.placeholder.com/600x400"}">
+
+<div class="preview-dots">
+
+${
+cardImages.map((_,i)=>{
+return `<span class="${i===0 ? "active" : ""}"></span>`;
+}).join("")
+}
+
+</div>
+
+<div class="date-box">
+${new Date(tea.created_at).toLocaleDateString("ko-KR")}
+</div>
+
+</div>
+
+<h3>
+${tea.tea_name || "이름 없는 차"}
+</h3>
+
+<div style="
+text-align:center;
+position:relative;
+">
+
+<p class="tea-date" style="margin:0;">
+${new Date(tea.created_at).toLocaleDateString("ko-KR")}
+</p>
+
+</div>
+
+`;
+
+        gallery.appendChild(card);
+
+        const previewBox = card.querySelector(".preview-box");
+        const previewImage = card.querySelector(".previewImage");
+        const dots = card.querySelectorAll(".preview-dots span");
+
+        previewBox.addEventListener("click",function(e){
+
+            openGalleryFromCard(this);
+
+        });
+
+        let previewIndex = 0;
+
+        previewBox.addEventListener("mousemove",(e)=>{
+
+            if(cardImages.length <= 1){
+                return;
+            }
+
+            const rect = previewBox.getBoundingClientRect();
+
+            const mouseX = e.clientX - rect.left;
+
+            const ratio = mouseX / rect.width;
+
+            let newIndex = Math.floor(
+                ratio * cardImages.length
+            );
+
+            if(newIndex >= cardImages.length){
+                newIndex = cardImages.length - 1;
+            }
+
+            if(newIndex !== previewIndex){
+
+                previewIndex = newIndex;
+
+                if(cardImages[newIndex]){
+                    previewImage.src = cardImages[newIndex];
+                }
+
+                dots.forEach(dot=>{
+                    dot.classList.remove("active");
+                });
+
+                if(dots[newIndex]){
+                    dots[newIndex].classList.add("active");
+                }
+
+            }
+
+        });
+
+        previewBox.addEventListener("mouseleave",()=>{
+
+            previewIndex = 0;
+
+            previewImage.src = cardImages[0];
+
+            dots.forEach(dot=>{
+                dot.classList.remove("active");
+            });
+
+            if(dots[0]){
+                dots[0].classList.add("active");
+            }
+
+        });
+
+    });
+
+    gallery.classList.remove(
+        "out-left",
+        "out-right",
+        "in-left",
+        "in-right"
+    );
+
+    void gallery.offsetWidth;
+
+    if(direction === "right"){
+        gallery.classList.add("in-right");
+    }else{
+        gallery.classList.add("in-left");
+    }
+
+    await new Promise(resolve=>{
+        setTimeout(resolve,380);
+    });
+
+    gallery.classList.remove(
+        "out-left",
+        "out-right",
+        "in-left",
+        "in-right"
+    );
+
+    randomCardMoving = false;
 
 }
 
 function openRecord(){
 
-    const modal =
-    document.getElementById("recordModal");
+```
+const modal =
+document.getElementById("recordModal");
 
-    modal.style.display="block";
+modal.style.display="block";
 
-    setTimeout(()=>{
+setTimeout(()=>{
 
-        modal.style.opacity="1";
+    modal.style.opacity="1";
 
-    },10);
+},10);
+```
 
 }
+
 
 
 
@@ -3761,7 +4253,7 @@ setTimeout(()=>{
 
 }
 
-window.addEventListener("load",()=>{
+window.addEventListener("load", async ()=>{
 
 const year = document.getElementById("yearInput");
 const month = document.getElementById("monthInput");
@@ -3792,9 +4284,37 @@ for(let i=1;i<=31;i++){
 
 }
 
-loadTeaRecords();
+await checkLogin();
 
-checkLogin();
+const {
+    data:{user}
+} = await supabaseClient.auth.getUser();
+
+if(user){
+
+    page = 1;
+
+    document
+    .getElementById("hero")
+    .classList.add("hide");
+
+    document
+    .getElementById("gallery")
+    .classList.add("show");
+
+    document
+    .getElementById("recordButton")
+    .classList.add("show");
+
+    document
+    .getElementById("infoButton")
+    .classList.add("hide");
+
+    window.scrollTo(0,0);
+
+}
+
+loadTeaRecords();
 
 });
 
@@ -4361,6 +4881,9 @@ setTimeout(()=>{
 
     window.scrollTo(0,0);
 
+    // 기존 ?user 제거
+    history.replaceState(null, "", window.location.pathname);
+
     location.reload();
 
 },1200);
@@ -4376,6 +4899,25 @@ authSending = false;
 
 
 }
+
+function handleInfoButton(){
+
+    const visitNickname =
+    getProfileNicknameFromURL();
+
+    if(visitNickname){
+
+        location.href =
+        window.location.pathname;
+
+        return;
+
+    }
+
+    openLetter();
+
+}
+
 
 function openLetter(){
 
@@ -4424,6 +4966,20 @@ const {
     }
 } = await supabaseClient.auth.getUser();
 
+const guestHero =
+document.getElementById("guestHero");
+
+const profileHero =
+document.getElementById("profileHero");
+
+const heroNickname =
+document.getElementById("heroNickname");
+
+const heroIntro =
+document.getElementById("heroIntro");
+
+const editProfileButton =
+document.getElementById("editProfileButton");
 
 if(user){
 
@@ -4435,9 +4991,27 @@ if(user){
 
     document.getElementById("logoutButton").style.display="block";
 
+    guestHero.style.display="none";
+    profileHero.style.display="block";
+
+    const { data } =
+    await supabaseClient
+    .from("profiles")
+    .select("*")
+    .eq("id", user.id)
+    .single();
+
+
+    heroNickname.innerText =
+    (data?.nickname || "사용자") + "님의 프로필";
+
+
+    heroIntro.innerText =
+    data?.intro || "소개가 없습니다.";
+
+    editProfileButton.style.display = "inline-block";
 
 }else{
-
 
     document.getElementById("loginButton").style.display="block";
 
@@ -4446,6 +5020,9 @@ if(user){
     document.getElementById("profileButton").style.display="none";
 
     document.getElementById("logoutButton").style.display="none";
+
+    guestHero.style.display="block";
+    profileHero.style.display="none";
 
 }
 
@@ -4456,6 +5033,8 @@ if(user){
 async function logoutUser(){
 
 await supabaseClient.auth.signOut();
+
+history.replaceState(null,"",window.location.pathname);
 
 location.reload();
 
@@ -4551,6 +5130,159 @@ modal.style.display="none";
 
 },400);
 
+
+}
+
+async function openProfileEdit(){
+
+const {
+    data:{
+        user
+    }
+} = await supabaseClient.auth.getUser();
+
+if(!user){
+
+    showAlert("로그인이 필요합니다");
+
+    return;
+
+}
+
+const { data, error } =
+
+await supabaseClient
+.from("profiles")
+.select("*")
+.eq("id",user.id)
+.single();
+
+if(error){
+
+    console.log(error);
+
+    showAlert("프로필을 불러오지 못했습니다.");
+
+    return;
+
+}
+
+document.getElementById("editNicknameInput").value =
+data.nickname || "";
+
+document.getElementById("editIntroInput").value =
+data.intro || "";
+
+const modal =
+document.getElementById("profileEditModal");
+
+modal.style.display="block";
+
+setTimeout(()=>{
+
+    modal.style.opacity="1";
+
+},10);
+
+}
+
+
+
+function closeProfileEdit(){
+
+const modal =
+document.getElementById("profileEditModal");
+
+modal.style.opacity="0";
+
+setTimeout(()=>{
+
+    modal.style.display="none";
+
+},400);
+
+}
+
+
+async function saveProfileEdit(){
+
+const {
+    data:{
+        user
+    }
+} = await supabaseClient.auth.getUser();
+
+if(!user){
+
+    showAlert("로그인이 필요합니다");
+
+    return;
+
+}
+
+console.log("로그인 user.id =", user.id);
+
+const { data: profile } =
+
+await supabaseClient
+.from("profiles")
+.select("*");
+
+console.table(profile);
+
+const nickname =
+document.getElementById("editNicknameInput").value.trim();
+
+const intro =
+document.getElementById("editIntroInput").value.trim();
+
+if(!nickname){
+
+    showAlert("닉네임을 입력해주세요.");
+
+    return;
+
+}
+
+const { data, error } =
+
+await supabaseClient
+.from("profiles")
+.update({
+
+    nickname:nickname,
+
+    intro:intro
+
+})
+.eq(
+    "id",
+    user.id
+)
+.select();
+
+console.log("UPDATE 결과:", data);
+console.log("UPDATE 에러:", error);
+
+if(error){
+
+    console.log(error);
+
+    showAlert("프로필 저장 실패");
+
+    return;
+
+}
+
+showAlert("프로필이 저장되었습니다.");
+
+closeProfileEdit();
+
+setTimeout(()=>{
+
+    location.reload();
+
+},1000);
 
 }
 
@@ -4675,7 +5407,7 @@ if(error){
 
 
 // 임시: 내 기록카드 페이지 이동
-loadUserTeaGallery(user.id, data.nickname);
+loadUserTeaGallery(userId, data.nickname);
 
 
 }
@@ -4781,6 +5513,51 @@ function goUserPage(){
 
     location.href =
     "?user=" + nickname;
+
+}
+
+
+function goVisitUserPage(){
+
+    const nickname =
+    document.getElementById("visitNickname").innerText;
+
+
+    location.href =
+    "?user=" + nickname;
+
+}
+
+
+async function loadTeaUserNickname(){
+
+    const { data, error } =
+    await supabaseClient
+    .from("profiles")
+    .select("nickname")
+    .eq("id", currentTeaUserId)
+    .single();
+
+
+    if(error){
+
+        console.log(error);
+
+        return;
+
+    }
+
+
+    currentTeaUserNickname =
+    data.nickname;
+
+}
+
+
+function goTeaUserPage(){
+
+    location.href =
+    "?user=" + currentTeaUserNickname;
 
 }
 
@@ -4948,7 +5725,24 @@ font-size:22px;
 <div class="alert-box" style="width:90%; max-width:1200px;">
 
 
-<h3 id="visitNickname">
+<h3 style="position:relative;">
+
+<span id="visitNickname">
+</span>
+
+
+<span 
+onclick="goVisitUserPage()"
+style="
+cursor:pointer;
+font-size:22px;
+margin-left:15px;
+"
+>
+🍵
+</span>
+
+
 </h3>
 
 
@@ -5030,6 +5824,52 @@ margin:10px 0;
 
 </div>
 
+<div id="profileEditModal" class="alert-modal">
+
+<div class="alert-box" style="max-width:520px;">
+
+<h2 style="margin-bottom:25px;">
+프로필 수정
+</h2>
+
+<p style="text-align:left;margin-bottom:8px;">
+닉네임
+</p>
+
+<input
+id="editNicknameInput"
+type="text"
+style="
+width:100%;
+box-sizing:border-box;
+margin-bottom:20px;
+">
+
+<p style="text-align:left;margin-bottom:8px;">
+소개
+</p>
+
+<textarea
+id="editIntroInput"
+style="
+width:100%;
+height:120px;
+box-sizing:border-box;
+resize:none;
+margin-bottom:25px;
+"></textarea>
+
+<button onclick="saveProfileEdit()">
+저장
+</button>
+
+<button onclick="closeProfileEdit()">
+취소
+</button>
+
+</div>
+
+</div>
 
 
 </body>
