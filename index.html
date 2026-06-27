@@ -1551,6 +1551,15 @@ body.random-mode .random-arrow{
 .gallery{
     will-change:transform;
 }
+
+.two-line-intro{
+    display:-webkit-box;
+    -webkit-line-clamp:2;
+    -webkit-box-orient:vertical;
+    overflow:hidden;
+    line-height:1.8;
+}
+
 </style>
 
 </head>
@@ -1634,6 +1643,21 @@ flex-shrink:0;
 flex:1;
 ">
 
+
+<button
+id="profileCardViewButton"
+onclick="openCurrentProfileCard()"
+style="
+display:none;
+margin-bottom:8px;
+padding:5px 14px;
+font-size:13px;
+position:relative;
+top:-4px;
+">
+프로필카드보기
+</button>
+
 <h2
 id="heroNickname"
 style="
@@ -1646,8 +1670,9 @@ letter-spacing:2px;
 
 <p
 id="heroIntro"
+class="two-line-intro"
 style="
-margin-top:12px;
+margin-top:4px;
 color:#9d8a68;
 line-height:1.8;
 ">
@@ -1722,9 +1747,11 @@ font-size:24px;
 
 <p
 id="profilePageIntro"
+class="two-line-intro"
 style="
 margin:5px 0;
 color:#9d8a68;
+line-height:1.8;
 ">
 </p>
 
@@ -2458,7 +2485,7 @@ margin-top:20px;
 
 ${
 currentUser &&
-currentUser.id === currentTeaUserId
+String(currentUser.id) === String(currentTeaUserId)
 ?
 `
 
@@ -3111,6 +3138,8 @@ const {
     }
 } = await supabaseClient.auth.getUser();
 
+// ✅ 현재 로그인한 사용자 전역 저장
+currentUser = user || null;
 
 let query;
 
@@ -3149,6 +3178,8 @@ if(visitNickname){
     currentProfileUserId = profile.id;
 
     document.getElementById("guestHero").style.display = "none";
+
+
     document.getElementById("profileHero").style.display = "block";
 
     document.getElementById("heroNickname").innerText =
@@ -3161,6 +3192,8 @@ if(visitNickname){
 
     document.getElementById("editProfileButton").style.display = "none";
 
+    document.getElementById("profileCardViewButton").style.display = "inline-block";
+
     document.getElementById("profileHeader").style.display = "block";
 
     document.getElementById("profilePageNickname").innerText =
@@ -3169,7 +3202,11 @@ if(visitNickname){
     document.getElementById("profilePageIntro").innerText =
     profile.intro || "소개가 없습니다.";
 
-    document.getElementById("infoButton").innerText = "←";
+    const infoButton =
+document.getElementById("infoButton");
+
+infoButton.innerText = "←";
+infoButton.classList.remove("hide");
 
 
     query =
@@ -3202,14 +3239,8 @@ else if(user){
     .from("tea_records")
     .select("*")
     .eq(
-        "user_id",
-        user.id
-    )
-    .order(
-        "created_at",
-        {
-            ascending:false
-        }
+        "is_public",
+        true
     );
 
 
@@ -3244,7 +3275,7 @@ return;
 
 }
 
-if(!user && !visitNickname && data){
+if(!visitNickname && data){
 
     document.body.classList.add("random-mode");
 
@@ -4354,33 +4385,6 @@ for(let i=1;i<=31;i++){
 
 await checkLogin();
 
-const {
-    data:{user}
-} = await supabaseClient.auth.getUser();
-
-if(user){
-
-    page = 1;
-
-    document
-    .getElementById("hero")
-    .classList.add("hide");
-
-    document
-    .getElementById("gallery")
-    .classList.add("show");
-
-    document
-    .getElementById("recordButton")
-    .classList.add("show");
-
-    document
-    .getElementById("infoButton")
-    .classList.add("hide");
-
-    window.scrollTo(0,0);
-
-}
 
 loadTeaRecords();
 
@@ -5021,7 +5025,9 @@ authSending = false;
 
 }
 
-function handleInfoButton(){
+
+
+async function handleInfoButton(){
 
     const visitNickname =
     getProfileNicknameFromURL();
@@ -5035,7 +5041,58 @@ function handleInfoButton(){
 
     }
 
+    const {
+        data:{
+            user
+        }
+    } = await supabaseClient.auth.getUser();
+
+    if(user){
+
+        goTeaMainScreen();
+
+        return;
+
+    }
+
     openLetter();
+
+}
+
+
+function goTeaMainScreen(){
+
+    page = 0;
+    moving = false;
+
+    document.getElementById("profileHero").style.display = "none";
+
+    document.getElementById("guestHero").style.display = "block";
+
+    document.getElementById("hero").classList.remove("hide");
+
+    document.getElementById("gallery").classList.remove("show");
+
+    document.getElementById("movingLine").classList.remove("move");
+
+    document.getElementById("recordButton").classList.remove("show");
+
+    document.getElementById("profileHeader").style.display = "none";
+
+    document.getElementById("randomGuide").style.display = "none";
+
+    document.body.classList.remove("random-mode");
+
+    const infoButton =
+    document.getElementById("infoButton");
+
+    infoButton.innerText = "?";
+    infoButton.classList.remove("hide");
+
+    window.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
 
 }
 
@@ -5112,25 +5169,8 @@ if(user){
 
     document.getElementById("logoutButton").style.display="block";
 
-    guestHero.style.display="none";
-    profileHero.style.display="block";
-
-    const { data } =
-    await supabaseClient
-    .from("profiles")
-    .select("*")
-    .eq("id", user.id)
-    .single();
-
-
-    heroNickname.innerText =
-    (data?.nickname || "사용자") + "님의 프로필";
-
-
-    heroIntro.innerText =
-    data?.intro || "소개가 없습니다.";
-
-    editProfileButton.style.display = "inline-block";
+    guestHero.style.display="block";
+    profileHero.style.display="none";
 
 }else{
 
@@ -5145,6 +5185,8 @@ if(user){
     guestHero.style.display="block";
     profileHero.style.display="none";
 
+    document.getElementById("profileCardViewButton").style.display = "none";
+
 }
 
 }
@@ -5158,6 +5200,57 @@ await supabaseClient.auth.signOut();
 history.replaceState(null,"",window.location.pathname);
 
 location.reload();
+
+}
+
+
+async function openCurrentProfileCard(){
+
+    const visitNickname =
+    getProfileNicknameFromURL();
+
+    if(visitNickname){
+
+        const { data, error } =
+        await supabaseClient
+        .from("profiles")
+        .select("*")
+        .eq("nickname", visitNickname)
+        .single();
+
+        if(error || !data){
+
+            showAlert("프로필을 불러오지 못했습니다.");
+
+            return;
+
+        }
+
+        document.getElementById("profileNickname").innerText =
+        "닉네임 : " + data.nickname;
+
+        document.getElementById("profileIntro").innerText =
+        "소개 : " + (data.intro || "소개가 없습니다");
+
+        document.getElementById("profileDate").innerText =
+        "가입일 : " + new Date(data.created_at).toLocaleDateString("ko-KR");
+
+        const modal =
+        document.getElementById("profileModal");
+
+        modal.style.display="block";
+
+        setTimeout(()=>{
+
+            modal.style.opacity="1";
+
+        },10);
+
+        return;
+
+    }
+
+    openProfile();
 
 }
 
