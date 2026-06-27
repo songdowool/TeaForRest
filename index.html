@@ -236,6 +236,10 @@ footer{
     z-index:30000;
 }
 
+#userSearchModal{
+    z-index:35000;
+}
+
 
 .modal-content{
     display:block;
@@ -1573,6 +1577,11 @@ body.random-mode .random-arrow{
 내 프로필
 </button>
 
+
+<button id="searchUserButton" onclick="openUserSearch()">
+유저 검색
+</button>
+
 <button id="logoutButton" style="display:none;" onclick="logoutUser()">
 로그아웃
 </button>
@@ -1930,6 +1939,36 @@ Copyright © 송도울
 
 </footer>
 
+<div id="userSearchModal" class="modal">
+
+<span class="close" onclick="closeUserSearch()">×</span>
+
+<div class="tea-detail record-box">
+
+<h2>
+유저 검색
+</h2>
+
+<p class="input-title">
+닉네임
+</p>
+
+<input
+id="userSearchInput"
+type="text"
+placeholder="검색할 닉네임을 입력하세요"
+oninput="searchUsersByNickname()"
+style="margin-bottom:20px;"
+>
+
+<div id="userSearchResult" style="
+margin-top:15px;
+text-align:left;
+"></div>
+
+</div>
+
+</div>
 
 
 
@@ -5595,6 +5634,180 @@ function goTeaUserPage(){
 
     location.href =
     "?user=" + currentTeaUserNickname;
+
+}
+
+function openUserSearch(){
+
+    const modal =
+    document.getElementById("userSearchModal");
+
+    document.getElementById("userSearchInput").value = "";
+    document.getElementById("userSearchResult").innerHTML = "";
+
+    modal.style.display = "block";
+
+    setTimeout(()=>{
+
+        modal.style.opacity = "1";
+
+    },10);
+
+}
+
+
+
+function closeUserSearch(){
+
+    const modal =
+    document.getElementById("userSearchModal");
+
+    modal.style.opacity = "0";
+
+    setTimeout(()=>{
+
+        modal.style.display = "none";
+
+    },400);
+
+}
+
+
+
+let userSearchTimer = null;
+
+
+
+function searchUsersByNickname(){
+
+    clearTimeout(userSearchTimer);
+
+    userSearchTimer = setTimeout(()=>{
+
+        runUserSearch();
+
+    },300);
+
+}
+
+
+
+async function runUserSearch(){
+
+    const keyword =
+    document.getElementById("userSearchInput").value.trim();
+
+    const resultBox =
+    document.getElementById("userSearchResult");
+
+    if(keyword.length < 1){
+
+        resultBox.innerHTML = "";
+
+        return;
+
+    }
+
+    const { data, error } =
+    await supabaseClient
+    .from("profiles")
+    .select("id,nickname,intro")
+    .ilike("nickname", `%${keyword}%`)
+    .limit(10);
+
+    if(error){
+
+        console.log(error);
+
+        resultBox.innerHTML = `
+        <p style="text-align:center;color:#9d8a68;">
+        검색 중 오류가 발생했습니다.
+        </p>
+        `;
+
+        return;
+
+    }
+
+    if(!data || data.length === 0){
+
+        resultBox.innerHTML = `
+        <p style="text-align:center;color:#9d8a68;">
+        검색 결과가 없습니다.
+        </p>
+        `;
+
+        return;
+
+    }
+
+    resultBox.innerHTML = "";
+
+    data.forEach((profile)=>{
+
+        const item =
+        document.createElement("div");
+
+        item.style.border = "1px solid #4a3c2b";
+        item.style.padding = "12px";
+        item.style.marginBottom = "10px";
+        item.style.cursor = "pointer";
+        item.style.background = "#211b17";
+
+        item.innerHTML = `
+
+        <div style="
+        display:flex;
+        align-items:center;
+        gap:12px;
+        ">
+
+            <div style="
+            width:42px;
+            height:42px;
+            border-radius:50%;
+            border:1px solid #4a3c2b;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            flex-shrink:0;
+            ">
+            🍵
+            </div>
+
+            <div>
+                <div style="
+                color:#d6c6a5;
+                font-size:16px;
+                ">
+                ${profile.nickname}
+                </div>
+
+                <div style="
+                color:#9d8a68;
+                font-size:13px;
+                margin-top:4px;
+                ">
+                ${profile.intro || "소개가 없습니다."}
+                </div>
+            </div>
+
+        </div>
+
+        `;
+
+        item.onclick = function(){
+
+            location.href =
+            window.location.pathname +
+            "?user=" +
+            encodeURIComponent(profile.nickname);
+
+        };
+
+        resultBox.appendChild(item);
+
+    });
 
 }
 
