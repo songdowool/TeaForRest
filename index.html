@@ -2853,17 +2853,31 @@ if(e.deltaY > 0){
         .classList.add("show");
 
 
-        supabaseClient.auth.getUser().then(({data:{user}})=>{
+const visitNickname =
+getProfileNicknameFromURL();
 
-            if(user){
+supabaseClient.auth.getUser().then(({data:{user}})=>{
 
-                document
-                .getElementById("recordButton")
-                .classList.add("show");
+    if(
+        user &&
+        visitNickname &&
+        currentProfileUserId &&
+        String(user.id) === String(currentProfileUserId)
+    ){
 
-            }
+        document
+        .getElementById("recordButton")
+        .classList.add("show");
 
-        });
+    }else{
+
+        document
+        .getElementById("recordButton")
+        .classList.remove("show");
+
+    }
+
+});
 
         document
         .getElementById("infoButton")
@@ -3032,17 +3046,31 @@ window.addEventListener("touchend",(e)=>{
         .classList.add("show");
 
 
-        supabaseClient.auth.getUser().then(({data:{user}})=>{
+const visitNickname =
+getProfileNicknameFromURL();
 
-            if(user){
+supabaseClient.auth.getUser().then(({data:{user}})=>{
 
-                document
-                .getElementById("recordButton")
-                .classList.add("show");
+    if(
+        user &&
+        visitNickname &&
+        currentProfileUserId &&
+        String(user.id) === String(currentProfileUserId)
+    ){
 
-            }
+        document
+        .getElementById("recordButton")
+        .classList.add("show");
 
-        });
+    }else{
+
+        document
+        .getElementById("recordButton")
+        .classList.remove("show");
+
+    }
+
+});
 
 
         setTimeout(()=>{
@@ -5027,12 +5055,13 @@ authSending = false;
 
 
 
-async function handleInfoButton(){
+function handleInfoButton(){
 
-    const visitNickname =
-    getProfileNicknameFromURL();
+    const infoButton =
+    document.getElementById("infoButton");
 
-    if(visitNickname){
+    // ← 버튼일 때만 메인으로 돌아가기
+    if(infoButton.innerText.trim() === "←"){
 
         location.href =
         window.location.pathname;
@@ -5041,20 +5070,7 @@ async function handleInfoButton(){
 
     }
 
-    const {
-        data:{
-            user
-        }
-    } = await supabaseClient.auth.getUser();
-
-    if(user){
-
-        goTeaMainScreen();
-
-        return;
-
-    }
-
+    // ? 버튼일 때는 로그인 상태여도 설명창 열기
     openLetter();
 
 }
