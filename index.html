@@ -1427,6 +1427,14 @@ button:hover{
     padding:0;
 }
 
+.random-arrow{
+    display:none;
+}
+
+body.random-mode .random-arrow{
+    display:block;
+}
+
 .random-arrow:hover{
     opacity:1;
     background:transparent;
@@ -1673,7 +1681,7 @@ padding-bottom:30px;
 display:flex;
 align-items:center;
 gap:15px;
-transform:translateY(150px);
+transform:translateY(110px);
 ">
 
 <div style="
@@ -3037,6 +3045,8 @@ let randomCardPageIndex = -1;
 
 async function loadTeaRecords(){
 
+document.body.classList.remove("random-mode");
+
 const {
     data:{
         user
@@ -3176,7 +3186,9 @@ return;
 
 }
 
-if(!user && data){
+if(!user && !visitNickname && data){
+
+    document.body.classList.add("random-mode");
 
     allRandomTeaRecords = [...data];
 
